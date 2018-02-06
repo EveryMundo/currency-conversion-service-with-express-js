@@ -7,7 +7,8 @@ const {registerRoutes} = require('./routes/index');
 const {
   listen,
   stopWorker,
-  setProcessEvents } = require('./server-features');
+  setProcessEvents,
+} = require('./server-features');
 
 const init = () => {
   logr.debug('initializing fastify');
