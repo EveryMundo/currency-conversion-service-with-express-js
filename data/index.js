@@ -1,6 +1,8 @@
 /* eslint-disable quotes, quote-props */
 const logr = require('em-logr').create('DATA');
 
+const clone = v => JSON.parse(JSON.stringify(v));
+
 const data = {
   "_id": "15039893239733380.479415146",
   "__v": 1,
@@ -184,9 +186,15 @@ const dataKeys = Object.keys(data);
 
 const rp = require('request-promise-native');
 
+const calculateSleepTime = (o) => {
+  const createdAt = new Date(o.__createdAt).getTime();
+  const now       = Date.now();
+  //                     min * sec * millis
+  return (createdAt +  60 *  60 * 1000) - now + 1000;
+};
+
 const update = () => {
   const {datacore} = require('../config').config;
-  // rp(`http://${ipAddr}:${port.$}/${method}/${params.join('/')}`)
   const options = {
     json: true,
     uri: datacore.URI,
@@ -195,25 +203,24 @@ const update = () => {
     },
   };
 
-  let sleepMs = 1000;
   rp(options)
     .then((result) => {
       const o = result.data[0];
-      dataKeys.forEach((key) => {
-        data[key] = o[key];
-      });
+      data._id         = o._id;
+      data.__v         = o.__v;
+      data.__createdAt = o.__createdAt;
+      data.timestamp   = o.timestamp;
+      data.source      = o.source;
+      data.date        = o.date;
+      data.rates       = clone(o.rates);
 
-      const createdAt = new Date(o.__createdAt);
-      const now       = new Date();
-      //                                 min * sec * millis
-      sleepMs = (createdAt.getTime() +  60 *  60 * 1000) - Date.now() + 1000;
-      logr.info({sleepMs, createdAt, now});
+      dataKeys.forEach(key => data[key] = clone(o[key]));
+      const sleepMs = calculateSleepTime(o);
+      setTimeout(update, sleepMs);
     })
     .catch((err) => {
       logr.error(err);
-    })
-    .then(() => {
-      setTimeout(update, sleepMs);
+      setTimeout(update, 30000);
     });
 
   return data;
@@ -221,6 +228,6 @@ const update = () => {
 
 
 module.exports = {
-  data,
+  get data() { return data; },
   update,
 };
