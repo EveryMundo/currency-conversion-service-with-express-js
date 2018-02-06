@@ -36,3 +36,13 @@ rules:
   complexity:
     - error
     - 6
+  object-curly-newline:
+  - error
+  - ObjectExpression:
+      minProperties: 10
+      multiline: true
+      consistent: true
+    ObjectPattern:
+      minProperties: 10
+      multiline: true
+      consistent: true
