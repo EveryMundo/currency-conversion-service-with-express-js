@@ -59,10 +59,10 @@ const savePidFile = () => {
 };
 
 const registerToEureka = () => {
-  const {EmEureka} = require('./lib/em-eureka');
+  const {EmEureka} = require('@everymundo/em-eureka');
 
   const {eureka} = config;
-  const {instanceId, app, hostName, ipAddr, port, securePort, vipAddress} = eureka.app;
+  const { instanceId, app, hostName, ipAddr, port, securePort, vipAddress } = eureka.app;
 
   const eurekaCli = EmEureka.createClient({
     instanceId, app, hostName, ipAddr, port, securePort, vipAddress, eureka,
