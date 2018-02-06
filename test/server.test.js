@@ -11,22 +11,25 @@ const
 
 describe('server.js', () => {
   const
+    dataFile = require('../data/index'),
     logr = require('em-logr'),
     noop = () => {};
 
-  let sandbox;
+  let box;
   beforeEach(() => {
     // creates sinon sandbox
-    sandbox = sinon.sandbox.create();
+    box = sinon.sandbox.create();
 
-    sandbox.stub(logr, 'create').callsFake(() => logr);
+    sinon.useFakeTimers();
+    box.stub(dataFile, 'update').callsFake(noop);
+    box.stub(logr, 'create').callsFake(() => logr);
     // stubs the logr to stop logging during tests
     ['debug', 'info', 'warn', 'error', 'fatal']
-      .forEach((level) => { sandbox.stub(logr, level).callsFake(noop); });
+      .forEach((level) => { box.stub(logr, level).callsFake(noop); });
   });
 
   // retores the sandbox
-  afterEach(() => { sandbox.restore(); });
+  afterEach(() => { box.restore(); });
 
   context('on load', () => {
     it('should export expected functions', () => {
@@ -55,12 +58,12 @@ describe('server.js', () => {
       listen              = sinon.spy(async () => results.push('listen'));
       stopWorker          = sinon.spy(async () => results.push('stopWorker'));
 
-      sandbox.stub(sf, 'setProcessEvents').callsFake(setProcessEvents);
-      sandbox.stub(rr, 'registerRoutes').callsFake(registerRoutes);
-      sandbox.stub(sf, 'listen').callsFake(listen);
-      sandbox.stub(sf, 'stopWorker').callsFake(stopWorker);
+      box.stub(sf, 'setProcessEvents').callsFake(setProcessEvents);
+      box.stub(rr, 'registerRoutes').callsFake(registerRoutes);
+      box.stub(sf, 'listen').callsFake(listen);
+      box.stub(sf, 'stopWorker').callsFake(stopWorker);
 
-      sandbox.stub(singFast, 'fastify').value({
+      box.stub(singFast, 'fastify').value({
 
       });
     });
