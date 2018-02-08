@@ -3,6 +3,7 @@
 const assert = require('assert');
 const logr   = require('em-logr').create({name: 'routes'});
 
+// route structure created by loading the routes from the routes folder
 const routes = {
   root:    require('./root'),
   convert: require('./convert'),
