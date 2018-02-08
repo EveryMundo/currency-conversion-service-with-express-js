@@ -1,7 +1,7 @@
 /* eslint-disable quotes, quote-props */
-const logr = require('em-logr').create('DATA');
+// const logr = require('em-logr').create('DATA');
 
-const clone = v => JSON.parse(JSON.stringify(v));
+// const clone = v => JSON.parse(JSON.stringify(v));
 
 const data = {
   "_id": "15039893239733380.479415146",
@@ -182,6 +182,7 @@ const data = {
   },
 };
 
+/*
 const dataKeys = Object.keys(data);
 
 const rp = require('request-promise-native');
@@ -226,8 +227,8 @@ const update = () => {
   return data;
 };
 
-
+ */
 module.exports = {
   get data() { return data; },
-  update,
+  update: () => (data),
 };
