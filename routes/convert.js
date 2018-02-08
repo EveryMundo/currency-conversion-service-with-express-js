@@ -35,6 +35,9 @@ const beforeHandler = (req, res, next) => {
 };
 
 const schema = {
+  description: 'It returns the value converted',
+  tags: [require('../package.json').name],
+  summary: 'Currency conversion method',
   response: {
     200: {
       type: 'object',

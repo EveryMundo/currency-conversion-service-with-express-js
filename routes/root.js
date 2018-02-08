@@ -9,6 +9,9 @@ const action = (req, reply) => {
 };
 
 const schema = {
+  description: 'It returns list of currencies',
+  tags: [require('../package.json').name],
+  summary: 'List of currencies',
   response: {
     200: {
       type: 'object',

@@ -41,6 +41,7 @@ describe('server.js', () => {
   describe('init', () => {
     let
       setProcessEvents,
+      setupSwagger,
       registerRoutes,
       listen,
       stopWorker,
@@ -48,12 +49,14 @@ describe('server.js', () => {
 
     const sf = require('../server-features');
     const rr = require('../routes');
+    const ss = require('../lib/setup-swagger');
     const singFast = require('../lib/fastify-singleton');
 
     before(() => {
       results = [];
 
       setProcessEvents    = sinon.spy(async () => results.push('setProcessEvents'));
+      setupSwagger        = sinon.spy(async () => results.push('setupSwagger'));
       registerRoutes      = sinon.spy(async () => results.push('registerRoutes'));
       listen              = sinon.spy(async () => results.push('listen'));
       stopWorker          = sinon.spy(async () => results.push('stopWorker'));
@@ -62,6 +65,7 @@ describe('server.js', () => {
       box.stub(rr, 'registerRoutes').callsFake(registerRoutes);
       box.stub(sf, 'listen').callsFake(listen);
       box.stub(sf, 'stopWorker').callsFake(stopWorker);
+      box.stub(ss, 'setupSwagger').callsFake(setupSwagger);
 
       box.stub(singFast, 'fastify').value({
 
@@ -71,6 +75,7 @@ describe('server.js', () => {
     it('call all the features functions in order', () => {
       const spies = {
         setProcessEvents,
+        setupSwagger,
         registerRoutes,
         listen,
         stopWorker,
