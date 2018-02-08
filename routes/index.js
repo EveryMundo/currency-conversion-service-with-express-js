@@ -2,17 +2,11 @@
 
 const assert = require('assert');
 const logr   = require('em-logr').create({name: 'routes'});
-const data   = require('../data');
 
 const routes = {
-  root: {
-    path: '/',
-    action(req, reply) {
-      logr.info('req.query', req.query);
-      reply.send(data);
-    },
-  },
+  root:    require('./root'),
   convert: require('./convert'),
+  example: require('./example'),
 };
 
 const registerRoutes = async (fastify) => {
