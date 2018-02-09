@@ -7,7 +7,7 @@ require('./test-setup.js');
 const
   sinon        = require('sinon'),
   {expect}     = require('chai'),
-  cleanrequire = require('./cleanrequire');
+  cleanrequire = require('@everymundo/cleanrequire');
 
 describe('server.js', () => {
   const

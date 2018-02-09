@@ -7,7 +7,7 @@ require('chai').should();
 const
   sinon  = require('sinon'),
   expect = require('chai').expect,
-  cleanrequire = require('./cleanrequire'),
+  cleanrequire = require('@everymundo/cleanrequire'),
   clone  = arg => JSON.parse(JSON.stringify(arg));
 
 describe('index', () => {
