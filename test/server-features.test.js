@@ -5,7 +5,7 @@ require('./test-setup.js');
 const
   sinon    = require('sinon'),
   {expect} = require('chai');
-  // cleanrequire = require('./cleanrequire'),
+  // cleanrequire = require('@everymundo/cleanrequire'),
   // clone    = arg => JSON.parse(JSON.stringify(arg));
 
 describe('server-features.js', () => {
