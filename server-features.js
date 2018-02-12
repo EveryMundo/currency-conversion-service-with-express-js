@@ -5,7 +5,7 @@ const logr     = require('em-logr').create({ name: 'WORKER'});
 
 const listen = fastify => new Promise((resolve, reject) => {
   logr.debug(`listening to http://0.0.0.0:${config.APP_PORT}`);
-  fastify.listen(config.APP_PORT, (err) => {
+  fastify.listen(config.APP_PORT, config.APP_IP, (err) => {
     logr.debug('listening to ', config.APP_PORT);
 
     if (err) {
