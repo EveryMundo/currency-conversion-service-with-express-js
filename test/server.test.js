@@ -11,6 +11,7 @@ const
 
 describe('server.js', () => {
   const
+    testFile = '../server.js',
     dataFile = require('../data/index'),
     logr = require('em-logr'),
     noop = () => {};
@@ -33,8 +34,38 @@ describe('server.js', () => {
 
   context('on load', () => {
     it('should export expected functions', () => {
-      const server = require('../server');
+      const server = require(testFile);
       expect(server.init).to.be.instanceof(Function);
+    });
+  });
+
+  describe('#fastifyReady', () => {
+    let fastifyReady;
+    let fakeFastify;
+    beforeEach(() => {
+      // eslint-disable-next-line prefer-destructuring
+      fastifyReady = require(testFile).fastifyReady;
+
+      fakeFastify = {
+        ready: sinon.spy(fn => fn()),
+        swagger: sinon.spy(() => {}),
+        server: {
+          address: () => ({port: 9999}),
+        },
+      };
+    });
+
+
+    it('should call fastify.ready()', () => {
+      fastifyReady(fakeFastify);
+
+      expect(fakeFastify.ready).to.have.property('calledOnce', true);
+    });
+
+    it('should call fastify.swagger()', () => {
+      fastifyReady(fakeFastify);
+
+      expect(fakeFastify.swagger).to.have.property('calledOnce', true);
     });
   });
 
@@ -82,7 +113,7 @@ describe('server.js', () => {
       };
       const exp = Object.keys(spies);
 
-      const {init} = cleanrequire('../server');
+      const {init} = cleanrequire(testFile);
       return init()
         .then(() => {
           expect(results).deep.equal(exp);

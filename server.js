@@ -11,30 +11,39 @@ const {
   setProcessEvents,
 } = require('./server-features');
 
+const fastifyReady = (fastify) => {
+  fastify.ready((err) => {
+    if (err) throw err;
+    fastify.swagger();
+
+    logr.info('Alright!');
+    logr.info(`server listening on ${fastify.server.address().port}`);
+  });
+
+  return fastify;
+};
+
+const dealWithErrors = (error) => {
+  logr.error(error);
+  stopWorker();
+};
+
 const init = () => {
   logr.debug('initializing fastify');
+  const { fastify } = require('./lib/fastify-singleton');
 
-  return setProcessEvents(require('./lib/fastify-singleton').fastify)
+  return setProcessEvents(fastify)
     .then(setupSwagger)
     .then(registerRoutes)
     .then(listen)
-    .then((fastify) => {
-      fastify.ready((err) => {
-        if (err) throw err;
-        fastify.swagger();
-
-        logr.info('Alright!');
-        logr.info(`server listening on ${fastify.server.address().port}`);
-      });
-    })
-    .catch((error) => {
-      logr.error(error);
-      stopWorker();
-    });
+    .then(fastifyReady)
+    .catch(dealWithErrors);
 };
 
 module.exports = {
   init,
+  fastifyReady,
+  dealWithErrors,
 };
 
 run(__filename, init);
