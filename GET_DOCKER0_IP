@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo $(ip address | grep 'global docker0' | grep -Po '\d+\.\d+\.\d+\.\d+')
