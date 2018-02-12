@@ -7,8 +7,9 @@ const packaJ = require('./package.json');
 const micro  = require('microtime');
 
 const config = {
-  APP_PORT:       Math.abs(env.APP_PORT),
-  LOG_LEVEL:      Math.abs(env.LOG_LEVEL),
+  APP_PORT:       Math.abs(env.APP_PORT) || 8907,
+  APP_IP:         env.APP_IP || '0.0.0.0',
+  LOG_LEVEL:      Math.abs(env.LOG_LEVEL) || 'info',
   NUM_OF_WORKERS: Math.abs(env.NUM_OF_WORKERS),
   datacore: {
     AUTHORIZATION: env.AUTHORIZATION,
