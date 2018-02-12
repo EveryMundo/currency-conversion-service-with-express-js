@@ -4,7 +4,7 @@ const logr = require('em-logr').create({ name: 'route /' });
 
 const data = require('../../data');
 
-const path = '/root';
+const path = '/';
 
 const action = (req, reply) => {
   logr.debug({data});
