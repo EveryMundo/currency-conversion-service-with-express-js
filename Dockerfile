@@ -25,7 +25,7 @@ COPY ./package*.json /home/node/microservice/
 RUN bash -c 'source $HOME/.nvm/nvm.sh && npm i --production'
 RUN mkdir /home/node/microservice/logs/
 COPY . /home/node/microservice
-COPY .env /home/node/microservice/
+COPY .env* /home/node/microservice/
 # RUN rm -rf .git
 
 ENV TINI_VERSION v0.16.1
