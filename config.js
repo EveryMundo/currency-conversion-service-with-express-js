@@ -1,7 +1,5 @@
 'use strict';
 
-require('dotenv').load();
-
 const {env}  = process;
 const packaJ = require('./package.json');
 const micro  = require('microtime');
