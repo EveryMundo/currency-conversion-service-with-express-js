@@ -55,6 +55,7 @@
     "fastify-helmet": "^1.0.3",
     "fastify-swagger": "^0.3.2",
     "ghooks": "^2.0.2",
+    "ip": "^1.1.5",
     "microtime": "^2.1.7",
     "request-promise": "^4.2.2",
     "request-promise-native": "^1.0.5",

@@ -3,13 +3,26 @@
 const {env}  = process;
 const packaJ = require('./package.json');
 const micro  = require('microtime');
+const ip     = require('ip');
 
-const APP_PORT = Math.abs(env.APP_PORT) || 8907;
+const defaults = {
+  APP_PORT: 8907,
+  APP_IP: '0.0.0.0',
+  LOG_LEVEL: 'info',
+};
+
+const isValidLogLevel = level => 'trace,debug,info,warn,error,fatal'.split(',').includes(level);
+
+const APP_PORT = Math.abs(env.APP_PORT) || defaults.APP_PORT;
+
+const APP_IP = ip.isV4Format(env.APP_IP) ? env.APP_IP : defaults.APP_IP;
+
+const LOG_LEVEL = isValidLogLevel(env.LOG_LEVEL) ? env.LOG_LEVEL : defaults.LOG_LEVEL;
 
 const config = {
   APP_PORT,
-  APP_IP:         env.APP_IP || '0.0.0.0',
-  LOG_LEVEL:      Math.abs(env.LOG_LEVEL) || 'info',
+  APP_IP,
+  LOG_LEVEL,
   NUM_OF_WORKERS: Math.abs(env.NUM_OF_WORKERS),
   datacore: {
     AUTHORIZATION: env.AUTHORIZATION,
@@ -32,4 +45,4 @@ const config = {
   },
 };
 
-module.exports = {config};
+module.exports = { config, defaults };
