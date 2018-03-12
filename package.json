@@ -9,7 +9,7 @@
     "check-lint": "eslint *.js lib/*.js test/*.js routes/*.js",
     "fix-lint": "eslint --fix *.js lib/*.js test/*.js routes/*.js",
     "eureka": "docker start eureka 2> /dev/null || docker run -d -p 8080:8080 --name eureka netflixoss/eureka:1.3.1",
-    "docker-build": "docker build -t currency-conversion-service:$(node -p \"require('./package').version\") .",
+    "docker-build": "docker build -t $(node -p \"const {name, version}=require('./package');name+':'+version\") .",
     "start": "NODE_ENV=production node cluster.js",
     "fake-config-server-start": "npm run fake-config-server-stop &> /dev/null; sleep 1; fake-config-server >> logs/fake-config-server.log 2>&1 & echo PID=$!",
     "fake-config-server-stop": "killall -9 fakeConfigServer",
