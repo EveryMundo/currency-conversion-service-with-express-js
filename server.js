@@ -3,7 +3,7 @@
 require('./lib/set-global-root-dir').setGlobalRootDir(__filename);
 
 const logr    = require('em-logr').create({ name: 'WORKER'});
-const { run } = require('./lib/runner');
+const { run } = require('@everymundo/runner');
 
 const { setupSwagger }   = require('./lib/setup-swagger');
 const { registerRoutes } = require('./routes/index');
