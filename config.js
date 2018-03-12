@@ -28,6 +28,7 @@ const config = {
     },
     host: env.EUREKA_HOST,
     port: env.EUREKA_PORT,
+    servicePath: env.EUREKA_SERVICE_PATH,
   },
 };
 
