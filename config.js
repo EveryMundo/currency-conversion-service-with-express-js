@@ -6,8 +6,10 @@ const {env}  = process;
 const packaJ = require('./package.json');
 const micro  = require('microtime');
 
+const APP_PORT = Math.abs(env.APP_PORT) || 8907;
+
 const config = {
-  APP_PORT:       Math.abs(env.APP_PORT) || 8907,
+  APP_PORT,
   APP_IP:         env.APP_IP || '0.0.0.0',
   LOG_LEVEL:      Math.abs(env.LOG_LEVEL) || 'info',
   NUM_OF_WORKERS: Math.abs(env.NUM_OF_WORKERS),
@@ -22,7 +24,7 @@ const config = {
       hostName:   env.EUREKA_APP_HOSTNAME,
       ipAddr:     env.EUREKA_APP_IP_ADDR,
       // statusPageUrl,
-      port:       env.APP_PORT,
+      port:       APP_PORT,
       securePort: env.EUREKA_APP_SECURE_PORT,
       vipAddress: env.EUREKA_VIP_ADDRESS,
     },
