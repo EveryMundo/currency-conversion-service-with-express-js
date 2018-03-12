@@ -67,12 +67,13 @@ const registerToEureka = () => {
   const { port, securePort } = eureka.app;
   const eurekaCfg = { port, securePort };
 
-  asyncClientFromConfigService(eurekaCfg)
+  return asyncClientFromConfigService(eurekaCfg)
     .then(() => {
       logr.info('eurekaCli connected');
     })
     .catch((err) => {
       logr.error(err);
+      throw err;
     });
 };
 
@@ -111,6 +112,7 @@ module.exports = {
   createWorkers,
   configKillSignals,
   configClusterEvents,
+  registerToEureka,
   savePidFile,
   initMaster,
   initWorker,
