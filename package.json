@@ -18,8 +18,8 @@
   },
   "config": {
     "ghooks": {
-      "pre-commit": "npm run check-lint && npm run cover #&& npm run check-coverage",
-      "pre-push": "npm run check-coverage"
+      "pre-commit": "npm run check-lint && npm test",
+      "pre-push": "npm run cover && npm run check-coverage"
     }
   },
   "repository": {
