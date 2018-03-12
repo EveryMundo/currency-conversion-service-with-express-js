@@ -9,7 +9,7 @@ const
   {expect}     = require('chai'),
   cleanrequire = require('@everymundo/cleanrequire');
 
-describe('server.js', () => {
+describe('fastify.server.js', () => {
   const
     testFile = '../server.js',
     dataFile = require('../data/index'),
@@ -37,15 +37,17 @@ describe('server.js', () => {
   });
 
   // retores the sandbox
-  afterEach(() => {
+  afterEach((done) => {
     box.restore();
-    if (fastify) fastify.close();
+    if (fastify) return fastify.close(done);
+
+    done();
   });
 
   context('get /', () => {
     it('should export expected functions', () => {
       const { data } = cleanrequire('../data');
-      const server = require(testFile);
+      const server = cleanrequire(testFile);
 
       server.init().then((fasty) => {
         fasty.inject({method: 'GET', url: '/'}, (err, response) => {
@@ -67,7 +69,7 @@ describe('server.js', () => {
 
       it('should export expected functions', () => {
         cleanrequire('../data');
-        const server = require(testFile);
+        const server = cleanrequire(testFile);
         server.init().then((fasty) => {
           fasty.inject({method: 'GET', url}, (err, response) => {
             expect(err).to.be.null;
@@ -94,7 +96,7 @@ describe('server.js', () => {
         const url = '/convert?value=1000&to=USD';
         it(`requesting ${url} should fail`, () => {
           cleanrequire('../data');
-          const server = require(testFile);
+          const server = cleanrequire(testFile);
           server.init().then((fasty) => {
             fasty.inject({ method: 'GET', url }, (err, response) => {
               expect(err).to.be.null;
@@ -118,7 +120,7 @@ describe('server.js', () => {
         const url = '/convert?value=1000&from=USD';
         it(`requesting ${url} should fail`, () => {
           cleanrequire('../data');
-          const server = require(testFile);
+          const server = cleanrequire(testFile);
           server.init().then((fasty) => {
             fasty.inject({ method: 'GET', url }, (err, response) => {
               expect(err).to.be.null;
@@ -142,7 +144,7 @@ describe('server.js', () => {
         const url = '/convert?from=EUR&to=USD';
         it(`requesting ${url} should fail`, () => {
           cleanrequire('../data');
-          const server = require(testFile);
+          const server = cleanrequire(testFile);
           server.init().then((fasty) => {
             fasty.inject({ method: 'GET', url }, (err, response) => {
               expect(err).to.be.null;
@@ -170,7 +172,7 @@ describe('server.js', () => {
 
       it('should export expected functions', () => {
         cleanrequire('../data');
-        const server = require(testFile);
+        const server = cleanrequire(testFile);
         server.init().then((fasty) => {
           fasty.inject({method: 'GET', url}, (err, response) => {
             expect(err).to.be.null;
@@ -196,7 +198,7 @@ describe('server.js', () => {
       const url = '/convert/something-that-does-not-match';
       it(`requesting ${url} should fail`, () => {
         cleanrequire('../data');
-        const server = require(testFile);
+        const server = cleanrequire(testFile);
         server.init().then((fasty) => {
           fasty.inject({ method: 'GET', url }, (err, response) => {
             expect(err).to.be.null;
