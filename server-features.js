@@ -18,22 +18,26 @@ const listen = fastify => new Promise((resolve, reject) => {
   });
 });
 
-function stopWorker(fastify) {
+const stopWorker = (fastify) => {
   logr.error('stopping woker %s', process.pid);
-  fastify.close(() => {
-    logr.error('done %s', process.pid);
-    process.exit(0);
-  });
-}
+  if (fastify && fastify.close) {
+    fastify.close(() => {
+      logr.error('done %s', process.pid);
+      process.exit(0);
+    });
 
-function setEventsFromMaster(fastify) {
+    return fastify;
+  }
+};
+
+const setEventsFromMaster = (fastify) => {
   process.on('message', (message) => {
     logr.info('MESSAGE RECEIVED:', message.type || message);
     if (message.type === 'stop') {
       return stopWorker(fastify);
     }
   });
-}
+};
 
 const setProcessEvents = async (fastify) => {
   process.on('SIGTERM', () => stopWorker(fastify));

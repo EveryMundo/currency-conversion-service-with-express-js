@@ -1,0 +1,31 @@
+{
+  "name": "airfare-cadmus-service-v1",
+  "profiles": [
+    "aws,aws-dev,aws-dev-virginia"
+  ],
+  "label": null,
+  "version": "5ce85c167e38d159f9ba691cc340c02b3bd26a72",
+  "state": null,
+  "propertySources": [
+    {
+      "name": "https://github.com/Bodaclick/openair-shared-aws/aws-dev-virginia/airfare-cadmus-service-v1.yml",
+      "source": {
+        "spring.data.mongodb.uri": "mongodb://microservice-dev-01.securitytrfx.com:27000,microservice-dev-02.securitytrfx.com:27000,microservice-dev-03.securitytrfx.com:27000,microservice-dev-04.securitytrfx.com:27000,microservice-dev-05.securitytrfx.com:27000/fares?readPreference=nearest"
+      }
+    },
+    {
+      "name": "https://github.com/Bodaclick/openair-shared-aws/aws-dev-virginia/application.yml",
+      "source": {
+        "elastisearch.host": "elasticsearch-dev.securitytrfx.com",
+        "elastisearch.port": 9300,
+        "elastisearch.ssl": false,
+        "elastisearch.username": "micro-dev",
+        "elastisearch.password": "SOMEPASSWORD",
+        "elastisearch.transport.type": "X-PACK",
+        "elastisearch.transport.sniff": false,
+        "elastisearch.transport.compress": true,
+        "elastisearch.cluster.name": "elastic-Development"
+      }
+    }
+  ]
+}

@@ -1,15 +1,14 @@
 'use strict';
 
-const logr     = require('em-logr').create({ name: 'WORKER'});
-const {run}    = require('./lib/runner');
+require('./lib/set-global-root-dir').setGlobalRootDir(__filename);
 
-const {setupSwagger}   = require('./lib/setup-swagger');
-const {registerRoutes} = require('./routes/index');
-const {
-  listen,
-  stopWorker,
-  setProcessEvents,
-} = require('./server-features');
+const logr    = require('em-logr').create({ name: 'WORKER'});
+const { run } = require('./lib/runner');
+
+const { setupSwagger }   = require('./lib/setup-swagger');
+const { registerRoutes } = require('./routes/index');
+
+const { listen, stopWorker, setProcessEvents } = require('./server-features');
 
 const fastifyReady = (fastify) => {
   fastify.ready((err) => {
@@ -23,9 +22,11 @@ const fastifyReady = (fastify) => {
   return fastify;
 };
 
-const dealWithErrors = (error) => {
+const dealWithErrors = fastify => (error) => {
   logr.error(error);
   stopWorker();
+
+  return fastify;
 };
 
 const init = () => {
@@ -37,7 +38,7 @@ const init = () => {
     .then(registerRoutes)
     .then(listen)
     .then(fastifyReady)
-    .catch(dealWithErrors);
+    .catch(dealWithErrors(fastify));
 };
 
 module.exports = {
