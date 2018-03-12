@@ -19,7 +19,7 @@
   },
   "config": {
     "ghooks": {
-      "-pre-commit": "npm run check-lint && npm test",
+      "pre-commit": "npm run check-lint && npm test",
       "pre-push": "npm run cover && npm run check-coverage"
     }
   },
@@ -47,7 +47,7 @@
     "sinon": "^4.4.3"
   },
   "dependencies": {
-    "@everymundo/em-eureka": "^1.0.0",
+    "@everymundo/em-eureka": "^1.1.0",
     "@everymundo/runner": "^1.1.0",
     "dotenv": "^5.0.1",
     "em-logr": "^1.2.0",
