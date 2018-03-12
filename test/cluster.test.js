@@ -35,6 +35,7 @@ describe('cluster.js', () => {
       expect(server.configKillSignals).to.be.instanceof(Function);
       expect(server.configClusterEvents).to.be.instanceof(Function);
       expect(server.savePidFile).to.be.instanceof(Function);
+      expect(server.registerToEureka).to.be.instanceof(Function);
       expect(server.initMaster).to.be.instanceof(Function);
       expect(server.initWorker).to.be.instanceof(Function);
       expect(server.init).to.be.instanceof(Function);
@@ -207,7 +208,47 @@ describe('cluster.js', () => {
   });
 
   describe('registerToEureka', () => {
-    it('should test its functionality');
+    const emEurekaLib = require('@everymundo/em-eureka');
+
+    let calledWithArgs;
+
+    context('When asyncClientFromConfigService resolves', () => {
+      beforeEach(() => {
+        calledWithArgs = undefined;
+        box.stub(emEurekaLib, 'asyncClientFromConfigService')
+          .callsFake(args => new Promise((resolve) => { calledWithArgs = args; resolve(); }));
+      });
+
+      it('should call asyncClientFromConfigService and resolve', () => {
+        const { registerToEureka } = server;
+
+        return registerToEureka().then(() => {
+          expect(emEurekaLib.asyncClientFromConfigService).to.have.property('calledOnce', true);
+          expect(calledWithArgs).to.have.property('port');
+          expect(calledWithArgs).to.have.property('securePort');
+        });
+      });
+    });
+
+    context('When asyncClientFromConfigService rejects', () => {
+      const error = new Error('asyncClientFromConfigService error');
+
+      beforeEach(() => {
+        calledWithArgs = undefined;
+        box.stub(emEurekaLib, 'asyncClientFromConfigService')
+          .callsFake(args => new Promise((_, reject) => { calledWithArgs = args; reject(error); }));
+      });
+
+      it('should call asyncClientFromConfigService and REJECT', () => {
+        const { registerToEureka } = server;
+
+        return registerToEureka().catch(() => {
+          expect(emEurekaLib.asyncClientFromConfigService).to.have.property('calledOnce', true);
+          expect(calledWithArgs).to.have.property('port');
+          expect(calledWithArgs).to.have.property('securePort');
+        });
+      });
+    });
   });
 
   describe('initWorker', () => {
