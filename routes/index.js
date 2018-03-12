@@ -10,9 +10,13 @@ const routes = {
   example: require('./example'),
 };
 
+const getPrefixFromPackageJSON = () => `/v${require('../package.json').version.split('.')[0]}`;
+
 const registerRoutes = async (fastify) => {
   // security: https://github.com/fastify/fastify-helmet
   fastify.register(require('fastify-helmet'));
+
+  const prefix = getPrefixFromPackageJSON();
 
   Object.keys(routes)
     .forEach((routeKey) => {
@@ -26,7 +30,7 @@ const registerRoutes = async (fastify) => {
           assert(regx.test(url), `${routeKey} => INVALID PATH/URL [${url}] for route [${routeKey}] does not match ${regx}`);
 
           logr.debug(`registering ${url}`);
-          fastify.route({url, method, beforeHandler, handler});
+          fastify.route({url: `${prefix}${url}`, method, beforeHandler, handler});
         });
     });
 
@@ -37,4 +41,5 @@ const registerRoutes = async (fastify) => {
 module.exports = {
   routes,
   registerRoutes,
+  getPrefixFromPackageJSON,
 };
