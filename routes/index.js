@@ -14,14 +14,21 @@ const registerRoutes = async (fastify) => {
   // security: https://github.com/fastify/fastify-helmet
   fastify.register(require('fastify-helmet'));
 
-  Object.keys(routes).forEach((route) => {
-    const {path, options, action} = routes[route];
-    const regx = /^\//;
-    assert(regx.test(path), `INVALID PATH [${path}] for route [${route}] does not match ${regx}`);
+  Object.keys(routes)
+    .forEach((routeKey) => {
+      const routeLib = routes[routeKey];
 
-    logr.debug(`registering ${path}`);
-    fastify.get(path, options || {}, action);
-  });
+      Object.keys(routeLib)
+        .forEach((keyMethod) => {
+          const { url, method, beforeHandler, handler} = routeLib[keyMethod];
+          const regx = /^\//;
+
+          assert(regx.test(url), `${routeKey} => INVALID PATH/URL [${url}] for route [${routeKey}] does not match ${regx}`);
+
+          logr.debug(`registering ${url}`);
+          fastify.route({url, method, beforeHandler, handler});
+        });
+    });
 
   return fastify;
 };

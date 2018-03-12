@@ -55,17 +55,29 @@ describe('server.js', () => {
       };
     });
 
+    context('no error', () => {
+      it('should call fastify.ready()', () => {
+        fastifyReady(fakeFastify);
 
-    it('should call fastify.ready()', () => {
-      fastifyReady(fakeFastify);
+        expect(fakeFastify.ready).to.have.property('calledOnce', true);
+      });
 
-      expect(fakeFastify.ready).to.have.property('calledOnce', true);
+      it('should call fastify.swagger()', () => {
+        fastifyReady(fakeFastify);
+
+        expect(fakeFastify.swagger).to.have.property('calledOnce', true);
+      });
     });
 
-    it('should call fastify.swagger()', () => {
-      fastifyReady(fakeFastify);
+    context('WITH ERROR', () => {
+      it('should throw the error', () => {
+        const error = new Error('Ready Error');
+        fakeFastify.ready = fn => fn(error);
 
-      expect(fakeFastify.swagger).to.have.property('calledOnce', true);
+        const caller = () => fastifyReady(fakeFastify);
+
+        expect(caller).to.throw(error);
+      });
     });
   });
 

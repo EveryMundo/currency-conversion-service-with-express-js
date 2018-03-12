@@ -1,7 +1,9 @@
+// asserting this file is properly located
+require('assert')(__filename.includes('/example/get.js'));
 
 const schema = {
   description: 'It returns hello {name}',
-  tags: [require('../package.json').name, 'another-tag'],
+  tags: [require(`${global.__rootdir}/package.json`).name, 'another-tag'],
   summary: 'this is just a get request example',
   params: {
     type: 'string',
@@ -25,29 +27,17 @@ const schema = {
   //   },
   // },
   response: {
-    200: {
-      description: 'Successful response',
-      type: 'object',
-      properties: {
-        hello: { type: 'string' },
-        obj: {
-          type: 'object',
-          properties: {
-            some: { type: 'string' },
-          },
-        },
-      },
-    },
+    200: require('./get.response.200.schema.json'),
   },
-  security: [
-    {
-      api_key: [],
-    },
-  ],
+  security: [{
+    api_key: [],
+  }],
 };
-const path = '/example';
 
-const action = (req, reply) => {
+const url    = '/example';
+const method = require(`${global.__rootdir}/lib/get-method-from-filename`)(__filename);
+
+const handler = (req, reply) => {
   const { name, ...rest } = req.query;
 
   // sending the result;
@@ -59,7 +49,4 @@ const action = (req, reply) => {
   });
 };
 
-
-const options = { schema };
-
-module.exports = { path, action, options };
+module.exports = { url, method, schema, handler };

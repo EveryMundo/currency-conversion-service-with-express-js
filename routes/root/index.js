@@ -1,26 +1,6 @@
-'use strict';
+// asserting this file is properly located
+require('assert')(__filename.includes('/root/index.js'));
 
-const logr = require('em-logr').create({ name: 'route /' });
-
-const data = require('../../data');
-
-const path = '/';
-
-const action = (req, reply) => {
-  logr.debug({data});
-  data.data.lala = {name:'Daniel', age:18};
-  reply.send(data.data);
+module.exports = {
+  'get /': require('./get'),
 };
-
-const schema = {
-  description: 'It returns list of currencies',
-  tags: [require('../../package.json').name],
-  summary: 'List of currencies',
-  response: {
-    200: require('./response.200.schema.json')[200],
-  },
-};
-
-const options = {schema};
-
-module.exports = {path, action, options};

@@ -1,0 +1,118 @@
+{
+  "name": "airfare-cadmus-service-v1",
+  "profiles": [
+    "aws,aws-dev,aws-dev-virginia"
+  ],
+  "label": null,
+  "version": "5ce85c167e38d159f9ba691cc340c02b3bd26a72",
+  "state": null,
+  "propertySources": [
+    {
+      "name": "https://github.com/Bodaclick/openair-shared-aws/aws-dev-virginia/airfare-cadmus-service-v1.yml",
+      "source": {
+        "spring.data.mongodb.uri": "mongodb://microservice-dev-01.securitytrfx.com:27000,microservice-dev-02.securitytrfx.com:27000,microservice-dev-03.securitytrfx.com:27000,microservice-dev-04.securitytrfx.com:27000,microservice-dev-05.securitytrfx.com:27000/fares?readPreference=nearest"
+      }
+    },
+    {
+      "name": "https://github.com/Bodaclick/openair-shared-aws/aws-dev-virginia/application.yml",
+      "source": {
+        "elastisearch.host": "elasticsearch-dev.securitytrfx.com",
+        "elastisearch.port": 9300,
+        "elastisearch.ssl": false,
+        "elastisearch.username": "micro-dev",
+        "elastisearch.password": "SOMEPASSWORD",
+        "elastisearch.transport.type": "X-PACK",
+        "elastisearch.transport.sniff": false,
+        "elastisearch.transport.compress": true,
+        "elastisearch.cluster.name": "elastic-Development",
+        "eureka.client.region": "us-east-1",
+        "eureka.client.availability-zones.us-east-1": "us-east-1a,us-east-1b",
+        "eureka.client.service-url.us-east-1a": "http://10.0.177.13:8761/eureka/",
+        "eureka.client.service-url.us-east-1b": "http://10.0.177.140:8761/eureka/",
+        "spring.redis.host": "openair-r4large.wnf6v7.ng.0001.use1.cache.amazonaws.com",
+        "spring.redis.port": 6379,
+        "spring.redis.cluster.nodes": "openair-m4large-0001-001.wnf6v7.0001.use1.cache.amazonaws.com:6379,openair-m4large-0001-002.wnf6v7.0001.use1.cache.amazonaws.com:6379,openair-m4large-0001-003.wnf6v7.0001.use1.cache.amazonaws.com:6379"
+      }
+    },
+    {
+      "name": "https://github.com/Bodaclick/openair-shared-aws/aws-dev/airfare-cadmus-service-v1.yml",
+      "source": {
+        "farenet.digest.enabled": false,
+        "farenet.digest.uri": "https://farenet.securitytrfx.com/booking_stats/farenet/ms/consumer/{airlineCode}",
+        "server.port": 0,
+        "spring.cloud.stream.bindings.aggregatePopularities.destination": "openair.cadmus",
+        "spring.cloud.stream.bindings.aggregatePopularities.group": "aggregate-popularities-v${version.major}",
+        "spring.cloud.stream.bindings.aggregatePopularities.consumer.concurrency": 10,
+        "spring.cloud.stream.bindings.processAirIndexBatch.destination": "openair.cadmus",
+        "spring.cloud.stream.bindings.processAirIndexBatch.group": "process-air-index-batch-v${version.major}",
+        "spring.cloud.stream.bindings.processAirIndexBatch.consumer.concurrency": 20,
+        "spring.cloud.stream.bindings.processFaresBatch.destination": "openair.cadmus",
+        "spring.cloud.stream.bindings.processFaresBatch.group": "process-fares-batch-v${version.major}",
+        "spring.cloud.stream.bindings.processFaresBatch.consumer.concurrency": 50,
+        "spring.cloud.stream.bindings.removeStaleFares.destination": "openair.cadmus",
+        "spring.cloud.stream.bindings.removeStaleFares.group": "remove-stale-fares-v${version.major}",
+        "spring.cloud.stream.bindings.removeUnavailableFares.destination": "openair.cadmus",
+        "spring.cloud.stream.bindings.removeUnavailableFares.group": "remove-unavailable-fares-v${version.major}",
+        "spring.cloud.stream.bindings.updatePopularities.destination": "openair.cadmus",
+        "spring.cloud.stream.bindings.updatePopularities.group": "update-popularities-v${version.major}",
+        "spring.cloud.stream.bindings.updatePopularities.consumer.concurrency": 20,
+        "spring.cloud.stream.bindings.updateWeeklyPopularities.destination": "openair.cadmus",
+        "spring.cloud.stream.bindings.updateWeeklyPopularities.group": "update-weekly-popularities-v${version.major}",
+        "spring.cloud.stream.bindings.updateWeeklyPopularities.consumer.concurrency": 10,
+        "spring.cloud.stream.rabbit.bindings.aggregatePopularities.consumer.bindingRoutingKey": "aggregate-popularities-v${version.major}",
+        "spring.cloud.stream.rabbit.bindings.processAirIndexBatch.consumer.bindingRoutingKey": "process-air-index-batch-v${version.major}",
+        "spring.cloud.stream.rabbit.bindings.processFaresBatch.consumer.bindingRoutingKey": "process-fares-batch-v${version.major}",
+        "spring.cloud.stream.rabbit.bindings.removeStaleFares.consumer.bindingRoutingKey": "remove-stale-fares-v${version.major}",
+        "spring.cloud.stream.rabbit.bindings.removeUnavailableFares.consumer.bindingRoutingKey": "remove-unavailable-fares-v${version.major}",
+        "spring.cloud.stream.rabbit.bindings.updatePopularities.consumer.bindingRoutingKey": "update-popularities-v${version.major}",
+        "spring.cloud.stream.rabbit.bindings.updateWeeklyPopularities.consumer.bindingRoutingKey": "update-weekly-popularities-v${version.major}"
+      }
+    },
+    {
+      "name": "https://github.com/Bodaclick/openair-shared-aws/aws-dev/application.yml",
+      "source": {
+        "eureka.environment": "staging",
+        "eureka.server.enableSelfPreservation": false,
+        "spring.cache.type": "REDIS",
+        "spring.rabbitmq.host": "rabbitmq-development.securitytrfx.com",
+        "spring.rabbitmq.username": "opendev",
+        "spring.rabbitmq.password": "SOMEPASSWORD",
+        "spring.sleuth.sampler.percentage": 0
+      }
+    },
+    {
+      "name": "https://github.com/Bodaclick/openair-shared-aws/aws/application.yml",
+      "source": {
+        "eureka.client.register-with-eureka": true,
+        "eureka.client.fetch-registry": true,
+        "eureka.client.preferSameZone": true,
+        "eureka.instance.prefer-ip-address": true,
+        "cors.allowed-methods": "*",
+        "feign.compression.request.enabled": true,
+        "feign.compression.request.mime-types[0]": "text/xml",
+        "feign.compression.request.mime-types[1]": "text/yaml",
+        "feign.compression.request.mime-types[2]": "text/css",
+        "feign.compression.request.mime-types[3]": "text/javascript",
+        "feign.compression.request.mime-types[4]": "image/png",
+        "feign.compression.request.mime-types[5]": "application/xml",
+        "feign.compression.request.mime-types[6]": "application/javascript",
+        "feign.compression.request.mime-types[7]": "application/json",
+        "feign.compression.request.min-request-size": 2048,
+        "feign.compression.response.enabled": true,
+        "hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds": 5000,
+        "server.compression.enabled": true,
+        "server.compression.mime-types[0]": "text/xml",
+        "server.compression.mime-types[1]": "text/yaml",
+        "server.compression.mime-types[2]": "text/css",
+        "server.compression.mime-types[3]": "text/javascript",
+        "server.compression.mime-types[4]": "image/png",
+        "server.compression.mime-types[5]": "application/xml",
+        "server.compression.mime-types[6]": "application/javascript",
+        "server.compression.mime-types[7]": "application/json",
+        "server.compression.mime-types[8]": "application/x-javascript",
+        "spring.jackson.serialization.write-dates-as-timestamps": false,
+        "spring.zipkin.locator.discovery.enabled": true
+      }
+    }
+  ]
+}
