@@ -61,9 +61,11 @@ const savePidFile = () => {
 const registerToEureka = () => {
   const { asyncClientFromConfigService } = require('@everymundo/em-eureka');
 
-  const {eureka} = config;
+  const { eureka } = config;
+
+  const { servicePath } = eureka;
   const { port, securePort } = eureka.app;
-  const eurekaCfg = { port, securePort };
+  const eurekaCfg = { port, securePort, eureka: { servicePath }};
 
   return asyncClientFromConfigService(eurekaCfg)
     .then(() => {
