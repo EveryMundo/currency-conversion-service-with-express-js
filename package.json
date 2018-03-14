@@ -44,10 +44,10 @@
     "istanbul": "^1.1.0-alpha.1",
     "mocha": "^5.0.4",
     "nock": "^9.2.3",
-    "sinon": "^4.4.3"
+    "sinon": "^4.4.5"
   },
   "dependencies": {
-    "@everymundo/em-eureka": "^1.1.0",
+    "@everymundo/em-eureka": "^1.1.1",
     "@everymundo/runner": "^1.1.0",
     "dotenv": "^5.0.1",
     "em-logr": "^1.2.0",
