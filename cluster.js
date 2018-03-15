@@ -2,10 +2,10 @@
 
 // https://nodejs.org/api/process.html#process_process_title
 process.title = `app-master-${require('./package.json').version}`;
+require('@everymundo/global-root-dir').setGlobalRootDir(__dirname);
 
 const logr     = require('em-logr').create({name: '{MASTER}'});
 const { run }  = require('@everymundo/runner');
-const { setGlobalRootDir } = require('./lib/set-global-root-dir');
 
 const {
   forkAWorker,
@@ -33,10 +33,6 @@ function initWorker() {
 }
 
 function init(cluster) {
-  // Check this
-  // https://github.com/isaacs/cluster-master/blob/master/cluster-master.js
-  setGlobalRootDir();
-
   if (cluster.isMaster) {
     logr.debug('Running cluster master');
     return initMaster(cluster);

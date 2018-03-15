@@ -1,6 +1,6 @@
 'use strict';
 
-require('./lib/set-global-root-dir').setGlobalRootDir(__filename);
+require('@everymundo/global-root-dir').setGlobalRootDir(__dirname);
 
 const logr    = require('em-logr').create({ name: 'WORKER'});
 const { run } = require('@everymundo/runner');
