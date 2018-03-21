@@ -58,3 +58,4 @@ typings/
 .env
 
 temp/
+APP_PORT.cache

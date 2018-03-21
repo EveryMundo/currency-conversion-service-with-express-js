@@ -48,7 +48,7 @@ function configKillSignals(cluster) {
 }
 
 function configClusterEvents(cluster) {
-  cluster.on('exit', (worker, code, signal) => {
+  cluster.on('SIGHUP', (worker, code, signal) => {
     logr.error('worker %d died (%s). restarting...', worker.process.pid, signal || code);
     setTimeout(forkAWorker, 1000, cluster);
   });

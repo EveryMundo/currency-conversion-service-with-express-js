@@ -8,6 +8,7 @@ const routes = {
   root:    require('./root'),
   convert: require('./convert'),
   example: require('./example'),
+  info:    require('./info'),
 };
 
 const getPrefixFromPackageJSON = () => `/v${require('../package.json').version.split('.')[0]}`;
