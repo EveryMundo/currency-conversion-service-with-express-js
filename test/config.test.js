@@ -38,10 +38,18 @@ describe('config.js', () => {
   });
 
   context('APP_PORT', () => {
-    before(() => { if (!('APP_PORT' in process.env)) process.env.APP_PORT = ''; });
+    const configSupport = require('../config-support');
+
+    before(() => {
+      box.stub(configSupport, 'getPortFromFile').callsFake(() => {});
+      box.stub(configSupport, 'savePortToFile').callsFake(() => {});
+
+      if (!('APP_PORT' in process.env)) process.env.APP_PORT = '';
+    });
 
     context('When env.APP_PORT has a valid value', () => {
       beforeEach(() => {
+        box.stub(process.env, 'APP_PORT').value('2000');
         box.stub(process.env, 'APP_PORT').value('2000');
       });
 

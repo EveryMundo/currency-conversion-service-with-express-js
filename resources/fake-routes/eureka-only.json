@@ -16,9 +16,7 @@
     {
       "name": "https://github.com/Bodaclick/openair-shared-aws/aws-dev-virginia/application.yml",
       "source": {
-        "eureka.client.region": "us-east-1",
-        "eureka.client.availability-zones.us-east-1": "us-east-1a,us-east-1b",
-        "eureka.client.service-url.us-east-1a": "http://172.17.0.1:8080/"
+        "eureka.client.service-url.default": "http://172.17.0.1:8080/eureka/v2/"
       }
     },
     {

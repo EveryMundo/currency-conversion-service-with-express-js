@@ -12,10 +12,14 @@ const defaults = {
   LOG_LEVEL: 'info',
 };
 
-const isValidLogLevel = level => 'trace,debug,info,warn,error,fatal'.split(',').includes(level);
+const { isValidLogLevel, getPortFromFile, savePortToFile } = require('./config-support');
 
-const APP_PORT     = Math.abs(env.APP_PORT)     || defaults.APP_PORT;
+const portFromFile = getPortFromFile();
+
+const APP_PORT = Math.abs(env.APP_PORT) || portFromFile || defaults.APP_PORT;
 const APP_SEC_PORT = Math.abs(env.APP_SEC_PORT) || defaults.APP_SEC_PORT;
+
+if (!portFromFile) savePortToFile(APP_PORT);
 
 const APP_IP = ip.isV4Format(env.APP_IP) ? env.APP_IP : defaults.APP_IP;
 
@@ -48,4 +52,4 @@ const config = {
   },
 };
 
-module.exports = { config, defaults };
+module.exports = { config, defaults, isValidLogLevel, getPortFromFile, savePortToFile };
