@@ -47,7 +47,7 @@
     "sinon": "^4.4.8"
   },
   "dependencies": {
-    "@everymundo/em-eureka": "^1.5.0",
+    "@everymundo/em-eureka": "^1.5.1",
     "@everymundo/global-root-dir": "^1.1.0",
     "@everymundo/runner": "^1.1.0",
     "dotenv": "^5.0.1",
