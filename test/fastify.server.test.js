@@ -63,6 +63,44 @@ describe('fastify.server.js', () => {
     });
   });
 
+  context('get /v1/info', () => {
+    it('should export expected functions', () => {
+      const server = cleanrequire(testFile);
+
+      server.init().then((fasty) => {
+        fasty.inject({method: 'GET', url: '/v1/info'}, (err, response) => {
+          expect(err).to.be.null;
+          expect(response).to.have.property('statusCode', 200);
+          expect(response.headers).to.have.property('content-type', 'application/json');
+
+          const responseData = JSON.parse(response.payload);
+
+          expect(responseData).to.have.property('loadedAt');
+          expect(responseData.loadedAt).to.match(/^\d{4}-\d{2}-\d{2}/);
+        });
+      });
+    });
+  });
+
+  context('get /v1/healthcheck', () => {
+    it('should export expected functions', () => {
+      const server = cleanrequire(testFile);
+
+      server.init().then((fasty) => {
+        fasty.inject({ method: 'GET', url: '/v1/healthcheck' }, (err, response) => {
+          expect(err).to.be.null;
+          expect(response).to.have.property('statusCode', 200);
+          expect(response.headers).to.have.property('content-type', 'application/json');
+
+          const responseData = JSON.parse(response.payload);
+          const expected = {healthy: true, pid: process.pid};
+
+          expect(responseData).to.deep.equal(expected);
+        });
+      });
+    });
+  });
+
   context('get /v1/convert', () => {
     context('valid request', () => {
       const url = '/v1/convert?value=1000&from=EUR&to=USD';

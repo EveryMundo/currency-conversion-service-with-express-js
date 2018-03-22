@@ -12,7 +12,6 @@ function forkAWorker(cluster) {
 }
 
 function createWorkers(cluster) {
-  const numCPUs = Math.abs(config.NUM_OF_WORKERS) || require('os').cpus().length;
   // const messageManager = {};
   // // Fork workers.
   // cluster.on('message', (worker, message) => {
@@ -22,7 +21,7 @@ function createWorkers(cluster) {
   //   }
   // });
 
-  for (let i = 0; i < numCPUs; i++) {
+  for (let i = 0; i < config.NUM_OF_WORKERS; i++) {
     forkAWorker(cluster);
   }
 }
@@ -69,9 +68,7 @@ const registerToEureka = () => {
 
   return asyncClientFromConfigService(eurekaCfg)
     .then((eurekaCli) => {
-      if (eurekaCli && eurekaCli.config) {
-        logr.info(`eurekaCli connected = ${eurekaCli.config.status}`, JSON.stringify(eurekaCli.config, null, 2));
-      }
+      logr.info(`eurekaCli connected = ${eurekaCli.config.status}`, JSON.stringify(eurekaCli.config, null, 2));
     })
     .catch((err) => {
       logr.error(err);

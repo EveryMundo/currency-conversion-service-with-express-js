@@ -1,7 +1,8 @@
 const fs   = require('fs');
 const logr = require('em-logr');
 
-const isValidLogLevel = level => 'trace,debug,info,warn,error,fatal'.split(',').includes(level);
+const validLevels = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
+const isValidLogLevel = level => validLevels.includes(level);
 
 const appPortCacheFile = './APP_PORT.cache';
 
@@ -30,4 +31,5 @@ module.exports = {
   getPortFromFile,
   savePortToFile,
   get appPortCacheFile() { return appPortCacheFile; },
+  get validLevels() { return JSON.parse(JSON.stringify(validLevels)); },
 };
