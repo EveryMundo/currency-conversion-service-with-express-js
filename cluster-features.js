@@ -68,8 +68,10 @@ const registerToEureka = () => {
   const eurekaCfg = { port, securePort, eureka: { servicePath }};
 
   return asyncClientFromConfigService(eurekaCfg)
-    .then(() => {
-      logr.info('eurekaCli connected');
+    .then((eurekaCli) => {
+      if (eurekaCli && eurekaCli.config) {
+        logr.info(`eurekaCli connected = ${eurekaCli.config.status}`, JSON.stringify(eurekaCli.config, null, 2));
+      }
     })
     .catch((err) => {
       logr.error(err);
