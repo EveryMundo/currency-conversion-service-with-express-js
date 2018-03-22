@@ -11,7 +11,8 @@ const loadedAt = new Date();
 
 const handler = (req, reply) => {
   // sending the result;
-  reply.send({ loadedAt });
+  const {name, version} = require(`${global.__rootdir}/package.json`);
+  reply.send({ app: {name, version}, loadedAt });
 };
 
 const schema = {
@@ -22,7 +23,14 @@ const schema = {
     200: {
       type: 'object',
       properties: {
-        loadedAt: { type: 'string' },  // "BRL"
+        app: {
+          type: 'object',
+          properties: {
+            name:    { type: 'string' },
+            version: { type: 'string' },
+          },
+        },
+        loadedAt: { type: 'string' },
       },
     },
   },
