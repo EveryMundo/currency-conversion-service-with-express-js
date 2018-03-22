@@ -8,7 +8,7 @@ const ip     = require('ip');
 const defaults = {
   APP_PORT: ~~(Math.random() * 64000), // eslint-disable-line no-bitwise
   APP_SEC_PORT: ~~(Math.random() * 64000), // eslint-disable-line no-bitwise
-  APP_IP: '0.0.0.0',
+  APP_IP: require('ip').address(),
   LOG_LEVEL: 'info',
   NUM_OF_WORKERS: require('os').cpus().length,
 };
