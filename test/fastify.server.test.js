@@ -75,8 +75,18 @@ describe('fastify.server.js', () => {
 
           const responseData = JSON.parse(response.payload);
 
-          expect(responseData).to.have.property('loadedAt');
+          const keys = Object.keys(responseData);
+          expect(keys).to.deep.equal(['app', 'loadedAt']);
+
           expect(responseData.loadedAt).to.match(/^\d{4}-\d{2}-\d{2}/);
+
+          const appKeys = Object.keys(responseData.app);
+          expect(appKeys).to.deep.equal(['name', 'version']);
+
+          const {name, version} = require('../package.json');
+
+          expect(responseData.app.name).to.equal(name);
+          expect(responseData.app.version).to.equal(version);
         });
       });
     });
