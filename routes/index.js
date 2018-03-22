@@ -12,7 +12,9 @@ const routes = {
   healthcheck: require('./healthcheck'),
 };
 
-const getPrefixFromPackageJSON = () => `/v${require('../package.json').version.split('.')[0]}`;
+const { getMajorVersionNumber } = require('@everymundo/generate-microservice-name');
+
+const getPrefixFromPackageJSON = () => `/v${getMajorVersionNumber()}`;
 
 const registerRoutes = async (fastify) => {
   // security: https://github.com/fastify/fastify-helmet
