@@ -95,30 +95,6 @@ describe('cluster-features.js', () => {
         expect(send).to.have.property('calledOnce', true);
       });
     });
-
-    context('when NUM_OF_WORKERS is NOT set', () => {
-      beforeEach(() => {
-        box.stub(config, 'NUM_OF_WORKERS').value(0);
-      });
-
-      it('should not call os.cpus()', () => {
-        const send = sinon.spy((obj) => {
-          expect(obj).to.have.property('type', 'setWorkerId');
-          expect(obj).to.have.property('workerId', 100);
-        });
-
-        const cluster = {
-          on:   sinon.spy((msg, cb) => cb()),
-          fork: sinon.spy(() => ({ send, id: 100 })),
-        };
-
-        createWorkers(cluster);
-
-        expect(cluster.fork).to.have.property('calledTwice', true);
-        expect(send).to.have.property('calledTwice', true);
-        expect(os.cpus).to.have.property('calledOnce', true);
-      });
-    });
   });
 
   describe('configKillSignals', () => {
@@ -213,7 +189,7 @@ describe('cluster-features.js', () => {
       beforeEach(() => {
         calledWithArgs = undefined;
         box.stub(emEurekaLib, 'asyncClientFromConfigService')
-          .callsFake(args => new Promise((resolve) => { calledWithArgs = args; resolve(); }));
+          .callsFake(args => new Promise((resolve) => { calledWithArgs = args; resolve({config:{status:'connected'}}); }));
       });
 
       it('should call asyncClientFromConfigService and resolve', () => {

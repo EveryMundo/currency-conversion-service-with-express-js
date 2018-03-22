@@ -101,6 +101,38 @@ describe('config.js', () => {
     });
   });
 
+  context('NUM_OF_WORKERS', () => {
+    before(() => { if (!('NUM_OF_WORKERS' in process.env)) process.env.NUM_OF_WORKERS = ''; });
+
+    context('When env.NUM_OF_WORKERS has a valid value', () => {
+      beforeEach(() => {
+        box.stub(process.env, 'NUM_OF_WORKERS').value('2');
+      });
+
+      it('should set config.NUM_OF_WORKERS with that value', () => {
+        const { config } = cleanrequire('../config');
+
+        expect(config).to.have.property('NUM_OF_WORKERS', 2);
+      });
+    });
+
+    context('When env.NUM_OF_WORKERS DOES NOT HAVE A valid value', () => {
+      const os = require('os');
+      beforeEach(() => {
+        box.stub(process.env, 'NUM_OF_WORKERS').value('');
+        box.stub(os, 'cpus').callsFake(() => ({length: 4}));
+      });
+
+      it('should set config.NUM_OF_WORKERS with that value', () => {
+        const { config, defaults } = cleanrequire('../config');
+
+        expect(os.cpus).to.have.property('calledOnce', true);
+        expect(defaults.NUM_OF_WORKERS).to.equal(4);
+        expect(config).to.have.property('NUM_OF_WORKERS', defaults.NUM_OF_WORKERS);
+      });
+    });
+  });
+
   context('LOG_LEVEL', () => {
     before(() => { if (!('LOG_LEVEL' in process.env)) process.env.LOG_LEVEL = ''; });
 

@@ -10,6 +10,7 @@ const defaults = {
   APP_SEC_PORT: ~~(Math.random() * 64000), // eslint-disable-line no-bitwise
   APP_IP: '0.0.0.0',
   LOG_LEVEL: 'info',
+  NUM_OF_WORKERS: require('os').cpus().length,
 };
 
 const { isValidLogLevel, getPortFromFile, savePortToFile } = require('./config-support');
@@ -25,12 +26,14 @@ const APP_IP = ip.isV4Format(env.APP_IP) ? env.APP_IP : defaults.APP_IP;
 
 const LOG_LEVEL = isValidLogLevel(env.LOG_LEVEL) ? env.LOG_LEVEL : defaults.LOG_LEVEL;
 
+const NUM_OF_WORKERS = Math.abs(env.NUM_OF_WORKERS) || defaults.NUM_OF_WORKERS;
+
 const config = {
   APP_PORT,
   APP_SEC_PORT,
   APP_IP,
   LOG_LEVEL,
-  NUM_OF_WORKERS: Math.abs(env.NUM_OF_WORKERS),
+  NUM_OF_WORKERS,
   datacore: {
     AUTHORIZATION: env.AUTHORIZATION,
     URI: env.DATACORE_URI,
