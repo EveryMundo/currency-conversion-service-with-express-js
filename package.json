@@ -1,6 +1,6 @@
 {
   "name": "currency-conversion-service",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Currency conversion microservice",
   "main": "index.js",
   "scripts": {
