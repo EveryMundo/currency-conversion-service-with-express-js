@@ -11,6 +11,7 @@ const
 
 describe('fastify.server.js', () => {
   const
+    { getMajorVersionNumber } = require('@everymundo/generate-microservice-name'),
     testFile = '../server.js',
     dataFile = require('../data/index'),
     logr = require('em-logr'),
@@ -19,6 +20,7 @@ describe('fastify.server.js', () => {
   let box;
 
   const sf = require('../server-features');
+  const prefixedV = `v${getMajorVersionNumber()}`;
 
   let fastify;
 
@@ -44,13 +46,13 @@ describe('fastify.server.js', () => {
     done();
   });
 
-  context('get /v1', () => {
+  context(`get /${prefixedV}`, () => {
     it('should export expected functions', () => {
       const { data } = cleanrequire('../data');
       const server = cleanrequire(testFile);
 
       server.init().then((fasty) => {
-        fasty.inject({method: 'GET', url: '/v1/'}, (err, response) => {
+        fasty.inject({ method: 'GET', url: `/${prefixedV}/` }, (err, response) => {
           expect(err).to.be.null;
           expect(response).to.have.property('statusCode', 200);
           expect(response.headers).to.have.property('content-type', 'application/json');
@@ -63,12 +65,12 @@ describe('fastify.server.js', () => {
     });
   });
 
-  context('get /v1/info', () => {
+  context(`get /${prefixedV}/info`, () => {
     it('should export expected functions', () => {
       const server = cleanrequire(testFile);
 
       server.init().then((fasty) => {
-        fasty.inject({method: 'GET', url: '/v1/info'}, (err, response) => {
+        fasty.inject({method: 'GET', url: `/${prefixedV}/info`}, (err, response) => {
           expect(err).to.be.null;
           expect(response).to.have.property('statusCode', 200);
           expect(response.headers).to.have.property('content-type', 'application/json');
@@ -92,12 +94,12 @@ describe('fastify.server.js', () => {
     });
   });
 
-  context('get /v1/healthcheck', () => {
+  context(`get /${prefixedV}/healthcheck`, () => {
     it('should export expected functions', () => {
       const server = cleanrequire(testFile);
 
       server.init().then((fasty) => {
-        fasty.inject({ method: 'GET', url: '/v1/healthcheck' }, (err, response) => {
+        fasty.inject({ method: 'GET', url: `/${prefixedV}/healthcheck` }, (err, response) => {
           expect(err).to.be.null;
           expect(response).to.have.property('statusCode', 200);
           expect(response.headers).to.have.property('content-type', 'application/json');
@@ -111,9 +113,9 @@ describe('fastify.server.js', () => {
     });
   });
 
-  context('get /v1/convert', () => {
+  context(`get /${prefixedV}/convert`, () => {
     context('valid request', () => {
-      const url = '/v1/convert?value=1000&from=EUR&to=USD';
+      const url = `/${prefixedV}/convert?value=1000&from=EUR&to=USD`;
 
       it('should export expected functions', () => {
         cleanrequire('../data');
@@ -141,7 +143,7 @@ describe('fastify.server.js', () => {
 
     context('INVALID request', () => {
       context('missing *from* argument', () => {
-        const url = '/v1/convert?value=1000&to=USD';
+        const url = `/${prefixedV}/convert?value=1000&to=USD`;
         it(`requesting ${url} should fail`, () => {
           cleanrequire('../data');
           const server = cleanrequire(testFile);
@@ -165,7 +167,7 @@ describe('fastify.server.js', () => {
       });
 
       context('missing *to* argument', () => {
-        const url = '/v1/convert?value=1000&from=USD';
+        const url = `/${prefixedV}/convert?value=1000&from=USD`;
         it(`requesting ${url} should fail`, () => {
           cleanrequire('../data');
           const server = cleanrequire(testFile);
@@ -189,7 +191,7 @@ describe('fastify.server.js', () => {
       });
 
       context('missing *value* argument', () => {
-        const url = '/v1/convert?from=EUR&to=USD';
+        const url = `/${prefixedV}/convert?from=EUR&to=USD`;
         it(`requesting ${url} should fail`, () => {
           cleanrequire('../data');
           const server = cleanrequire(testFile);
@@ -216,7 +218,7 @@ describe('fastify.server.js', () => {
 
   context('get /convert/:expr', () => {
     context('valid request', () => {
-      const url = '/v1/convert/1000-from-EUR-to-USD';
+      const url = `/${prefixedV}/convert/1000-from-EUR-to-USD`;
 
       it('should export expected functions', () => {
         cleanrequire('../data');
@@ -243,7 +245,7 @@ describe('fastify.server.js', () => {
     });
 
     context('INVALID request', () => {
-      const url = '/v1/convert/something-that-does-not-match';
+      const url = `/${prefixedV}/convert/something-that-does-not-match`;
       it(`requesting ${url} should fail`, () => {
         cleanrequire('../data');
         const server = cleanrequire(testFile);
