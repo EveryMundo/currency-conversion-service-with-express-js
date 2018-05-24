@@ -15,8 +15,9 @@ const fastifyReady = (fastify) => {
     if (err) throw err;
     fastify.swagger();
 
-    logr.info('Alright!');
-    logr.info(`server listening on ${fastify.server.address().port}`);
+    logr.info('Alright, fastify is Ready!');
+    const { family, address, port } = fastify.server.address();
+    logr.info(`server listening via ${family} on http://${address}:${port}`);
   });
 
   return fastify;
