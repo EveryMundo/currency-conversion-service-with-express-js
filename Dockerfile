@@ -6,23 +6,26 @@ LABEL maintainer="daniel@everymundo.com"
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get autoremove
 RUN apt-get install -y apt-utils curl git build-essential
+RUN apt-get install -y python
+# RUN apt install screen telnet netcat -y
 
 # RUN useradd -ms /bin/bash node
 
 # USER node
 
 # Install nvm
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 RUN bash -c 'source $HOME/.nvm/nvm.sh   && \
     nvm install stable                  && \
     nvm use default                     && \
+    npm install -g npm@latest           && \
     npm install -g bunyan pino'
 
-RUN apt install screen telnet netcat -y
+
 RUN mkdir -p /home/node/microservice
 WORKDIR /home/node/microservice
 COPY ./package*.json /home/node/microservice/
-RUN bash -c 'source $HOME/.nvm/nvm.sh && npm i --production'
+RUN bash -c 'source $HOME/.nvm/nvm.sh && npm audit && npm i --production'
 RUN mkdir /home/node/microservice/logs/
 COPY . /home/node/microservice
 COPY .env* /home/node/microservice/
