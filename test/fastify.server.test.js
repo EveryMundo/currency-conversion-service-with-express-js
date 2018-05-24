@@ -26,7 +26,7 @@ describe('fastify.server.js', () => {
 
   beforeEach(() => {
     // creates sinon sandbox
-    box = sinon.sandbox.create();
+    box = sinon.createSandbox();
 
     sinon.useFakeTimers();
     box.stub(dataFile, 'update').callsFake(noop);
@@ -55,7 +55,7 @@ describe('fastify.server.js', () => {
         fasty.inject({ method: 'GET', url: `/${prefixedV}/` }, (err, response) => {
           expect(err).to.be.null;
           expect(response).to.have.property('statusCode', 200);
-          expect(response.headers).to.have.property('content-type', 'application/json');
+          expect(response.headers).to.have.property('content-type', 'application/json; charset=utf-8');
 
           const responseData = JSON.parse(response.payload);
 
@@ -73,7 +73,7 @@ describe('fastify.server.js', () => {
         fasty.inject({method: 'GET', url: `/${prefixedV}/info`}, (err, response) => {
           expect(err).to.be.null;
           expect(response).to.have.property('statusCode', 200);
-          expect(response.headers).to.have.property('content-type', 'application/json');
+          expect(response.headers).to.have.property('content-type', 'application/json; charset=utf-8');
 
           const responseData = JSON.parse(response.payload);
 
@@ -102,7 +102,7 @@ describe('fastify.server.js', () => {
         fasty.inject({ method: 'GET', url: `/${prefixedV}/healthcheck` }, (err, response) => {
           expect(err).to.be.null;
           expect(response).to.have.property('statusCode', 200);
-          expect(response.headers).to.have.property('content-type', 'application/json');
+          expect(response.headers).to.have.property('content-type', 'application/json; charset=utf-8');
 
           const responseData = JSON.parse(response.payload);
           const expected = {healthy: true, pid: process.pid};
@@ -124,7 +124,7 @@ describe('fastify.server.js', () => {
           fasty.inject({method: 'GET', url}, (err, response) => {
             expect(err).to.be.null;
             expect(response).to.have.property('statusCode', 200);
-            expect(response.headers).to.have.property('content-type', 'application/json');
+            expect(response.headers).to.have.property('content-type', 'application/json; charset=utf-8');
 
             const responseData = JSON.parse(response.payload);
             const expected = {
@@ -227,7 +227,7 @@ describe('fastify.server.js', () => {
           fasty.inject({method: 'GET', url}, (err, response) => {
             expect(err).to.be.null;
             expect(response).to.have.property('statusCode', 200);
-            expect(response.headers).to.have.property('content-type', 'application/json');
+            expect(response.headers).to.have.property('content-type', 'application/json; charset=utf-8');
 
             const responseData = JSON.parse(response.payload);
             const expected = {

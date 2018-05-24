@@ -19,7 +19,7 @@ describe('server.js', () => {
   let box;
   beforeEach(() => {
     // creates sinon sandbox
-    box = sinon.sandbox.create();
+    box = sinon.createSandbox();
 
     sinon.useFakeTimers();
     box.stub(dataFile, 'update').callsFake(noop);
