@@ -16,7 +16,7 @@ describe('cluster-features.js', () => {
   let box;
   beforeEach(() => {
     // creates sinon sandbox
-    box = sinon.sandbox.create();
+    box = sinon.createSandbox();
 
     // stubs the logr to stop logging during tests
     ['debug', 'info', 'warn', 'error', 'fatal']
