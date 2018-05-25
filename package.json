@@ -47,7 +47,7 @@
     "sinon": "^5.0.10"
   },
   "dependencies": {
-    "@everymundo/em-eureka": "^1.6.0",
+    "@everymundo/em-eureka": "^1.7.0",
     "@everymundo/generate-microservice-name": "^1.1.1",
     "@everymundo/global-root-dir": "^1.1.0",
     "@everymundo/runner": "^1.1.0",
