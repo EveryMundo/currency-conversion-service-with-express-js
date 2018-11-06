@@ -2,12 +2,10 @@
 
 const assert = require('assert');
 const logr   = require('em-logr').create({name: 'routes'});
-
 // route structure created by loading the routes from the routes folder
 const routes = {
   root:    require('./root'),
   convert: require('./convert'),
-  example: require('./example'),
   info:    require('./info'),
   healthcheck: require('./healthcheck'),
 };
@@ -16,29 +14,29 @@ const { getMajorVersionNumber } = require('@everymundo/generate-microservice-nam
 
 const getPrefixFromPackageJSON = () => `/v${getMajorVersionNumber()}`;
 
-const registerRoutes = async (fastify) => {
-  // security: https://github.com/fastify/fastify-helmet
-  fastify.register(require('fastify-helmet'));
-
+const registerRoutes = async (express) => {
   const prefix = getPrefixFromPackageJSON();
-
   Object.keys(routes)
     .forEach((routeKey) => {
       const routeLib = routes[routeKey];
 
       Object.keys(routeLib)
         .forEach((keyMethod) => {
-          const { url, method, beforeHandler, handler} = routeLib[keyMethod];
+          const { url, method, beforeHandler, validations, handler} = routeLib[keyMethod];
           const regx = /^\//;
-
           assert(regx.test(url), `${routeKey} => INVALID PATH/URL [${url}] for route [${routeKey}] does not match ${regx}`);
 
-          logr.debug(`registering ${url}`);
-          fastify.route({url: `${prefix}${url}`, method, beforeHandler, handler});
+          logr.debug(`Registering >${method.toLowerCase()} ${url}`);
+          const valid = validations !== undefined ? validations : [];
+          const handlers = beforeHandler !== undefined ? [beforeHandler, handler] : handler;
+          express[method.toLowerCase()](`${prefix}${url}`, valid, handlers);
+          if (express._router.stack.find(stack => stack.route && stack.route.path === `${prefix}${url}`)) {
+            logr.debug(`${url} Registered successfully`);
+          }
         });
     });
 
-  return fastify;
+  return express;
 };
 
 // exporting in this way makes testing/stubbing easier
