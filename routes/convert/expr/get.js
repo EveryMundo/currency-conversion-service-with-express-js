@@ -20,7 +20,7 @@ const beforeHandler = (req, res, next) => {
 
   const match = params.expr.match(exprRegExp);
 
-  if (!match) return next(new Error(`Invalid expression '${params.expr}'`));
+  if (!match) res.status(500).send({ error:`Invalid expression '${params.expr}'`});
 
   const [, value, from, to] = match;
 

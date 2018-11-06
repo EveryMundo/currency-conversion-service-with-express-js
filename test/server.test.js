@@ -83,30 +83,29 @@ describe('server.js', () => {
 
   describe('init', () => {
     let
+      listen,
       setProcessEvents,
       setupSwagger,
       registerRoutes,
-      listen,
       stopWorker,
       results;
 
     const sf = require('../server-features');
     const rr = require('../routes');
     const ss = require('../lib/setup-swagger');
-    const singFast = require('../lib/fastify-singleton');
+    const singFast = require('../lib/express-singleton');
 
     before(() => {
       results = [];
-
+      listen              = sinon.spy(async () => results.push('listen'));
       setProcessEvents    = sinon.spy(async () => results.push('setProcessEvents'));
       setupSwagger        = sinon.spy(async () => results.push('setupSwagger'));
       registerRoutes      = sinon.spy(async () => results.push('registerRoutes'));
-      listen              = sinon.spy(async () => results.push('listen'));
       stopWorker          = sinon.spy(async () => results.push('stopWorker'));
 
+      box.stub(sf, 'listen').callsFake(listen);
       box.stub(sf, 'setProcessEvents').callsFake(setProcessEvents);
       box.stub(rr, 'registerRoutes').callsFake(registerRoutes);
-      box.stub(sf, 'listen').callsFake(listen);
       box.stub(sf, 'stopWorker').callsFake(stopWorker);
       box.stub(ss, 'setupSwagger').callsFake(setupSwagger);
 
@@ -117,10 +116,10 @@ describe('server.js', () => {
 
     it('call all the features functions in order', () => {
       const spies = {
+        listen,
         setProcessEvents,
         setupSwagger,
         registerRoutes,
-        listen,
         stopWorker,
       };
       const exp = Object.keys(spies);
@@ -129,9 +128,8 @@ describe('server.js', () => {
       return init()
         .then(() => {
           expect(results).deep.equal(exp);
-
-          expect(setProcessEvents).to.have.property('calledOnce', true);
           expect(listen).to.have.property('calledOnce', true);
+          expect(setProcessEvents).to.have.property('calledOnce', true);
           expect(stopWorker).to.have.property('calledOnce', true);
           expect(setProcessEvents).to.have.property('calledOnce', true);
         });

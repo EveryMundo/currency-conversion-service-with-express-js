@@ -33,9 +33,9 @@ const beforeHandler = (req, res, next) => {
   query.to    = ('' + query.to).toUpperCase();
 
   // eslint-disable-next-line no-restricted-globals
-  if (isNaN(query.value)) return next(new Error(`Invalid value [${query.value}]`));
-  if (!(query.from in data.rates)) return next(new Error(`Unkown currency code [${query.from}] in from`));
-  if (!(query.to   in data.rates)) return next(new Error(`Unkown currency code [${query.to}] in to`));
+  if (isNaN(query.value)) res.status(500).send({ error:`Invalid value [${query.value}]`});
+  if (!(query.from in data.rates)) res.status(500).send({ error:`Unknown currency code [${query.from}] in from`});
+  if (!(query.to   in data.rates)) res.status(500).send({ error:`Unknown currency code [${query.to}] in to`});
 
   next();
 };

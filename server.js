@@ -1,50 +1,48 @@
 'use strict';
 
 require('@everymundo/global-root-dir').setGlobalRootDir(__dirname);
+const helmet = require('helmet');
+const bodyParser = require('body-parser');
+const logr = require('em-logr').create({name: 'WORKER'});
+const {run} = require('@everymundo/runner');
 
-const logr    = require('em-logr').create({ name: 'WORKER'});
-const { run } = require('@everymundo/runner');
+const {setupSwagger} = require('./lib/setup-swagger');
+const {registerRoutes} = require('./routes/index');
 
-const { setupSwagger }   = require('./lib/setup-swagger');
-const { registerRoutes } = require('./routes/index');
+const {listen, stopWorker, setProcessEvents} = require('./server-features');
 
-const { listen, stopWorker, setProcessEvents } = require('./server-features');
-
-const fastifyReady = (fastify) => {
-  fastify.ready((err) => {
-    if (err) throw err;
-    fastify.swagger();
-
-    logr.info('Alright, fastify is Ready!');
-    const { family, address, port } = fastify.server.address();
-    logr.info(`server listening via ${family} on http://${address}:${port}`);
-  });
-
-  return fastify;
+/**
+ * Loads the middleware except request validator and its associated error handler
+ * @param {require('express').app} express
+ * @returns require('express').app
+ */
+const expressMiddleware = (express) => {
+  express.use(helmet());
+  express.use(bodyParser.json());
+  return express;
 };
 
-const dealWithErrors = fastify => (error) => {
+const dealWithErrors = express => (error) => {
   logr.error(error);
   stopWorker();
 
-  return fastify;
+  return express;
 };
 
 const init = () => {
-  logr.debug('initializing fastify');
-  const { fastify } = require('./lib/fastify-singleton');
+  logr.debug('initializing express');
+  const {express} = require('./lib/express-singleton');
 
-  return setProcessEvents(fastify)
-    .then(setupSwagger)
+  return setProcessEvents(express)
+    .then(expressMiddleware)
     .then(registerRoutes)
+    .then(setupSwagger)
     .then(listen)
-    .then(fastifyReady)
-    .catch(dealWithErrors(fastify));
+    .catch(dealWithErrors);
 };
 
 module.exports = {
   init,
-  fastifyReady,
   dealWithErrors,
 };
 

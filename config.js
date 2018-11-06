@@ -1,9 +1,9 @@
 'use strict';
 
 const {env}  = process;
-const packaJ = require('./package.json');
 const micro  = require('microtime');
 const ip     = require('ip');
+const packaJ = require('./package.json');
 
 const defaults = {
   APP_PORT: ~~(Math.random() * 64000), // eslint-disable-line no-bitwise

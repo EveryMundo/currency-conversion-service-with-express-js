@@ -3,8 +3,8 @@
 // https://nodejs.org/api/process.html#process_process_title
 process.title = `app-master-${require('./package.json').version}`;
 
-const {config} = require('./config');
 const logr     = require('em-logr').create({name: '{MASTER}'});
+const {config} = require('./config');
 
 function forkAWorker(cluster) {
   const worker = cluster.fork();
@@ -84,4 +84,3 @@ module.exports = {
   registerToEureka,
   savePidFile,
 };
-

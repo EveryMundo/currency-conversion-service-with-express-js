@@ -1,50 +1,48 @@
 'use strict';
 
-const {config} = require('./config');
 const logr     = require('em-logr').create({ name: 'WORKER'});
+const {config} = require('./config');
 
-const listen = fastify => new Promise((resolve, reject) => {
+const listen = express => new Promise((resolve, reject) => {
   logr.debug(`listening to http://0.0.0.0:${config.APP_PORT}`);
-  fastify.listen(config.APP_PORT, config.APP_IP, (err) => {
+  express.listen(config.APP_PORT, (err) => {
     logr.debug('listening to ', config.APP_PORT);
 
     if (err) {
       logr.error(err);
       return reject(err);
     }
-
-    logr.info(`server listening on ${fastify.server.address().port}`);
-    resolve(fastify);
+    // logr.info(`server listening on ${server.address().port}`);
+    resolve(express);
   });
+  return express;
 });
 
-const stopWorker = (fastify) => {
+const stopWorker = (server) => {
   logr.error('stopping woker %s', process.pid);
-  if (fastify && fastify.close) {
-    fastify.close(() => {
-      logr.error('done %s', process.pid);
-      process.exit(0);
-    });
-
-    return fastify;
+  if (server) {
+    logr.error('done %s', process.pid);
+    // server.close();
+    process.exit(0);
   }
+  return server;
 };
 
-const setEventsFromMaster = (fastify) => {
+const setEventsFromMaster = (server) => {
   process.on('message', (message) => {
     logr.info('MESSAGE RECEIVED:', message.type || message);
     if (message.type === 'stop') {
-      return stopWorker(fastify);
+      return stopWorker(server);
     }
   });
 };
 
-const setProcessEvents = async (fastify) => {
-  process.on('SIGTERM', () => stopWorker(fastify));
+const setProcessEvents = async (server) => {
+  process.on('SIGTERM', () => stopWorker(server));
 
-  setEventsFromMaster(fastify);
+  setEventsFromMaster(server);
 
-  return fastify;
+  return server;
 };
 
 module.exports = {
