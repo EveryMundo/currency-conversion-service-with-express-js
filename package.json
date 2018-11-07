@@ -1,6 +1,6 @@
 {
   "name": "currency-conversion-service-with-express-js",
-  "version": "1.5.1",
+  "version": "2.0.0",
   "description": "Currency conversion microservice with Express",
   "main": "index.js",
   "scripts": {
