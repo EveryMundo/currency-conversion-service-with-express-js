@@ -15,7 +15,8 @@
     "fake-config-server-start": "npm run fake-config-server-stop &> /dev/null; sleep 1; fake-config-server >> logs/fake-config-server.log 2>&1 & echo PID=$!",
     "fake-config-server-stop": "killall -9 fakeConfigServer",
     "dev": "nodemon -r 'dotenv/config' cluster.js || echo 'Please install nodemon globaly' && echo npm install -g nodemon",
-    "test": "NODE_ENV=test LOG_LEVEL=test mocha -R spec"
+    "test": "NODE_ENV=test LOG_LEVEL=test mocha -R spec",
+    "local": "LOG_LEVEL=debug node -r 'dotenv/config' cluster.js"
   },
   "config": {
     "ghooks": {
