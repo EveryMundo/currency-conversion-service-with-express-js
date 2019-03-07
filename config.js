@@ -11,6 +11,8 @@ const defaults = {
   APP_IP: require('ip').address(),
   LOG_LEVEL: 'info',
   NUM_OF_WORKERS: require('os').cpus().length,
+  SPRING_PROFILES_ACTIVE: 'local-dev',
+  SPRING_CLOUD_CONFIG_URI: 'http://localhost:8888',
 };
 
 const { isValidLogLevel, getPortFromFile, savePortToFile } = require('./config-support');
@@ -28,12 +30,18 @@ const LOG_LEVEL = isValidLogLevel(env.LOG_LEVEL) ? env.LOG_LEVEL : defaults.LOG_
 
 const NUM_OF_WORKERS = Math.abs(env.NUM_OF_WORKERS) || defaults.NUM_OF_WORKERS;
 
+const SPRING_PROFILES_ACTIVE = env.SPRING_PROFILES_ACTIVE || defaults.SPRING_PROFILES_ACTIVE;
+
+const SPRING_CLOUD_CONFIG_URI = env.SPRING_CLOUD_CONFIG_URI || defaults.SPRING_CLOUD_CONFIG_URI;
+
 const config = {
   APP_PORT,
   APP_SEC_PORT,
   APP_IP,
   LOG_LEVEL,
   NUM_OF_WORKERS,
+  SPRING_PROFILES_ACTIVE,
+  SPRING_CLOUD_CONFIG_URI,
   datacore: {
     AUTHORIZATION: env.AUTHORIZATION,
     URI: env.DATACORE_URI,
