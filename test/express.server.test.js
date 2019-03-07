@@ -11,7 +11,6 @@ const
 
 describe('fastify.server.js', () => {
   const
-    {getMajorVersionNumber} = require('@everymundo/generate-microservice-name'),
     testFile = '../server.js',
     dataFile = require('../data/index'),
     logr = require('em-logr'),
@@ -21,7 +20,6 @@ describe('fastify.server.js', () => {
   let box;
 
   const sf = require('../server-features');
-  const prefixedV = `v${getMajorVersionNumber()}`;
 
   let express;
   beforeEach(() => {
@@ -53,40 +51,30 @@ describe('fastify.server.js', () => {
     }
   });
 
-  context(`get /${prefixedV}`, () => {
-    it(`it should call get /${prefixedV}`, (done) => {
+  context('get /info', () => {
+    it('it should call get /info', (done) => {
       express = cleanrequire(testFile);
       express.init().then((app) => {
-        request(app).get(`/${prefixedV}`).expect('Content-Type', /json/)
+        request(app).get('/info').expect('Content-Type', /json/)
           .expect(200, done);
       });
     });
   });
 
-  context(`get /${prefixedV}/info`, () => {
-    it(`it should call get /${prefixedV}/info`, (done) => {
+  context('get /healthcheck', () => {
+    it('it should call get /healthcheck', (done) => {
       express = cleanrequire(testFile);
       express.init().then((app) => {
-        request(app).get(`/${prefixedV}/info`).expect('Content-Type', /json/)
-          .expect(200, done);
-      });
-    });
-  });
-
-  context(`get /${prefixedV}/healthcheck`, () => {
-    it(`it should call get /${prefixedV}/healthcheck`, (done) => {
-      express = cleanrequire(testFile);
-      express.init().then((app) => {
-        request(app).get(`/${prefixedV}/healthcheck`)
+        request(app).get('/healthcheck')
           .expect('Content-Type', /json/)
           .expect(200, done);
       });
     });
   });
 
-  context(`get /${prefixedV}/convert`, () => {
+  context('get /convert', () => {
     context('valid request', () => {
-      const url = `/${prefixedV}/convert?value=1000&from=EUR&to=USD`;
+      const url = '/convert?value=1000&from=EUR&to=USD';
       it('should export expected functions', (done) => {
         express = cleanrequire(testFile);
         express.init().then((app) => {
@@ -105,7 +93,7 @@ describe('fastify.server.js', () => {
 
   context('INVALID request', () => {
     context('missing *from* argument', () => {
-      const url = `/${prefixedV}/convert?value=1000&to=USD`;
+      const url = '/convert?value=1000&to=USD';
       it(`requesting ${url} should fail`, (done) => {
         express = cleanrequire(testFile);
         express.init().then((app) => {
@@ -115,7 +103,7 @@ describe('fastify.server.js', () => {
     });
 
     context('missing *to* argument', () => {
-      const url = `/${prefixedV}/convert?value=1000&from=USD`;
+      const url = '/convert?value=1000&from=USD';
       it(`requesting ${url} should fail`, (done) => {
         express = cleanrequire(testFile);
         express.init().then((app) => {
@@ -124,7 +112,7 @@ describe('fastify.server.js', () => {
       });
     });
     context('missing *value* argument', () => {
-      const url = `/${prefixedV}/convert?from=EUR&to=USD`;
+      const url = '/convert?from=EUR&to=USD';
       it(`requesting ${url} should fail`, (done) => {
         express = cleanrequire(testFile);
         express.init().then((app) => {
@@ -136,7 +124,7 @@ describe('fastify.server.js', () => {
 
   context('get /convert/:expr', () => {
     context('valid request', () => {
-      const url = `/${prefixedV}/convert/1000-from-EUR-to-USD`;
+      const url = '/convert/1000-from-EUR-to-USD';
 
       it('should export expected functions', (done) => {
         express = cleanrequire(testFile);
@@ -154,7 +142,7 @@ describe('fastify.server.js', () => {
     });
 
     context('INVALID request', () => {
-      const url = `/${prefixedV}/convert/something-that-does-not-match`;
+      const url = '/convert/something-that-does-not-match';
       it(`requesting ${url} should fail`, (done) => {
         express = cleanrequire(testFile);
         express.init().then((app) => {
