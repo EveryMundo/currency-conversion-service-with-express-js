@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const logr = require('em-logr').create({name: 'WORKER'});
 const {run} = require('@everymundo/runner');
-
+const { loadConfig }          = require('./lib/spring');
 const {setupSwagger} = require('./lib/setup-swagger');
 const {registerRoutes} = require('./routes/index');
 
@@ -33,7 +33,8 @@ const init = () => {
   logr.debug('initializing express');
   const {express} = require('./lib/express-singleton');
 
-  return setProcessEvents(express)
+  return loadConfig()
+    .then(() => setProcessEvents(express))
     .then(expressMiddleware)
     .then(registerRoutes)
     .then(setupSwagger)
@@ -46,4 +47,8 @@ module.exports = {
   dealWithErrors,
 };
 
-run(__filename, init);
+loadConfig()
+  .then(() => {
+    run(__filename, init);
+  })
+  .catch((error) => { throw error; });

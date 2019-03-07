@@ -3,8 +3,13 @@
 // https://nodejs.org/api/process.html#process_process_title
 process.title = `app-master-${require('./package.json').version}`;
 
-const logr     = require('em-logr').create({name: '{MASTER}'});
+const ddTracer = require('dd-trace');
+
+const { getMajorVersionNumber } = require('@everymundo/generate-microservice-name');
+
 const {config} = require('./config');
+
+const logr     = require('em-logr').create({name: '{MASTER}'});
 
 function forkAWorker(cluster) {
   const worker = cluster.fork();
@@ -12,15 +17,6 @@ function forkAWorker(cluster) {
 }
 
 function createWorkers(cluster) {
-  // const messageManager = {};
-  // // Fork workers.
-  // cluster.on('message', (worker, message) => {
-  //   logr.debug('MESSAGE FROM Worker', message.type || message);
-  //   if (message.type in messageManager) {
-  //     return messageManager[message.type](message);
-  //   }
-  // });
-
   for (let i = 0; i < config.NUM_OF_WORKERS; i++) {
     forkAWorker(cluster);
   }
@@ -58,22 +54,28 @@ const savePidFile = () => {
 };
 
 const registerToEureka = () => {
-  const { asyncClientFromConfigService } = require('@everymundo/em-eureka');
+  const { getEurekaClient } = require('./lib/eureka');
+  return getEurekaClient()
+    .then()
+    .catch((error) => { throw error; });
+};
 
-  const { eureka } = config;
+const handleUnhandled = (cluster) => {
+  process.on('unhandledRejection', (err, p) => {
+    logr.error('An Unhandled Rejection occurred in promise ', p);
+    logr.error(err);
+    setTimeout(forkAWorker, 1000, cluster);
+  });
+};
 
-  const { servicePath } = eureka;
-  const { port, securePort } = eureka.app;
-  const eurekaCfg = { port, securePort, eureka: { servicePath }};
-
-  return asyncClientFromConfigService(eurekaCfg)
-    .then((eurekaCli) => {
-      logr.info(`eurekaCli connected = ${eurekaCli.config.status}`, JSON.stringify(eurekaCli.config, null, 2));
-    })
-    .catch((err) => {
-      logr.error(err);
-      throw err;
-    });
+const configureTracer = () => {
+  const tracer = ddTracer.init({
+    service: `${require('./package.json').name}-v${getMajorVersionNumber()}`,
+    plugins: false,
+    tags: {platform: 'nodejs'},
+  });
+  tracer.use('express');
+  return tracer;
 };
 
 module.exports = {
@@ -81,6 +83,8 @@ module.exports = {
   createWorkers,
   configKillSignals,
   configClusterEvents,
+  configureTracer,
   registerToEureka,
   savePidFile,
+  handleUnhandled,
 };

@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    config:
+      enabled: true
+      endpoint: 'http://localhost:8888'
+      name: application-name-service-v1
+      profiles: 'local-dev,local'
