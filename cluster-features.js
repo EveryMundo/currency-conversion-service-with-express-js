@@ -7,9 +7,10 @@ const ddTracer = require('dd-trace');
 
 const { getMajorVersionNumber } = require('@everymundo/generate-microservice-name');
 
+const logr     = require('em-logr').create({name: '{MASTER}'});
+
 const {config} = require('./config');
 
-const logr     = require('em-logr').create({name: '{MASTER}'});
 
 function forkAWorker(cluster) {
   const worker = cluster.fork();
