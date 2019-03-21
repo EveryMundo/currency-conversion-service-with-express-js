@@ -6,14 +6,16 @@ require('./test-setup.js');
 
 const
   sinon = require('sinon'),
-  request = require('supertest'),
   cleanrequire = require('@everymundo/cleanrequire');
 
 describe.only('express server', () => {
   const
+    chai = require('chai'),
+    {expect} = chai,
     testFile = '../server.js',
     dataFile = require('../data/index'),
     logr = require('em-logr'),
+    {Reply} = cleanrequire('./fixtures/reply'),
     noop = () => {
     };
 
@@ -51,44 +53,43 @@ describe.only('express server', () => {
     }
   });
 
-  context.only('get /info', () => {
-    it('it should call get /info', (done) => {
-      express = cleanrequire(testFile);
-      express.loadServer()
-        .then((app) => {
-          request(app).get('/info').expect('Content-Type', /json/)
-            .expect(200, done);
-        })
-        .catch((error) => { done(error); });
+  context('get /info', () => {
+    it('it should call get /info', async () => {
+      const reply = new Reply();
+
+      const {handler} = cleanrequire('../routes/info/get');
+      await handler({}, reply);
+      expect(reply).to.have.property('statusCode', 200);
     });
   });
 
   context('get /healthcheck', () => {
-    it('it should call get /healthcheck', (done) => {
-      express = cleanrequire(testFile);
-      express.loadServer().then((app) => {
-        request(app).get('/healthcheck')
-          .expect('Content-Type', /json/)
-          .expect(200, done);
-      });
+    it('it should call get /healthcheck', async () => {
+      const reply = new Reply();
+
+      const {handler} = cleanrequire('../routes/healthcheck/get');
+      await handler({}, reply);
+      expect(reply).to.have.property('statusCode', 200);
     });
   });
 
   context('get /convert', () => {
     context('valid request', () => {
-      const url = '/convert?value=1000&from=EUR&to=USD';
-      it('should export expected functions', (done) => {
-        express = cleanrequire(testFile);
-        express.loadServer().then((app) => {
-          const expected = {
-            fixed: '1199.47',
-            from: 'EUR',
-            result: 1199.4707934859139,
-            to: 'USD',
-            value: 1000,
-          };
-          request(app).get(url).expect('Content-Type', /json/).expect(200, expected, done);
-        });
+      it('should export expected functions', async () => {
+        const reply = new Reply();
+
+        const {handler} = cleanrequire('../routes/convert/get');
+        await handler({params: {value: 1000, from: 'EUR', to: 'USD'}}, reply);
+        expect(reply).to.have.property('statusCode', 200);
+        const expected = {
+          fixed: '1199.47',
+          from: 'EUR',
+          result: 1199.4707934859139,
+          to: 'USD',
+          value: 1000,
+        };
+
+        expect(reply).to.have.property('body', expected);
       });
     });
   });
@@ -96,30 +97,13 @@ describe.only('express server', () => {
   context('INVALID request', () => {
     context('missing *from* argument', () => {
       const url = '/convert?value=1000&to=USD';
-      it(`requesting ${url} should fail`, (done) => {
-        express = cleanrequire(testFile);
-        express.loadServer().then((app) => {
-          request(app).get(url).expect(500, {error: 'Unknown currency code [UNDEFINED] in from'}, done);
-        });
-      });
-    });
+      it(`requesting ${url} should fail`, async () => {
+        const reply = new Reply();
 
-    context('missing *to* argument', () => {
-      const url = '/convert?value=1000&from=USD';
-      it(`requesting ${url} should fail`, (done) => {
-        express = cleanrequire(testFile);
-        express.loadServer().then((app) => {
-          request(app).get(url).expect(500, {error: 'Unknown currency code [UNDEFINED] in to'}, done);
-        });
-      });
-    });
-    context('missing *value* argument', () => {
-      const url = '/convert?from=EUR&to=USD';
-      it(`requesting ${url} should fail`, (done) => {
-        express = cleanrequire(testFile);
-        express.loadServer().then((app) => {
-          request(app).get(url).expect(500, {error: 'Invalid value [NaN]'}, done);
-        });
+
+        const {handler} = cleanrequire('../routes/convert/get');
+        await handler({params: {value: 1000, to: 'USD'}}, reply);
+        expect(reply).to.have.property('statusCode', 500);
       });
     });
   });

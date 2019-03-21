@@ -12,7 +12,7 @@ const loadedAt = new Date();
 const handler = (req, reply) => {
   // sending the result;
   const {name, version} = require(`${global.__rootdir}/package.json`);
-  reply.send({ app: {name, version}, loadedAt });
+  reply.json({ app: {name, version}, loadedAt });
 };
 
 const schema = {

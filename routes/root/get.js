@@ -11,7 +11,7 @@ const url = '/';
 const method = require(`${global.__rootdir}/lib/get-method-from-filename`)(__filename);
 
 const handler = (req, reply) => {
-  reply.send(data);
+  reply.json(data);
 };
 
 const schema = {
