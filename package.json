@@ -4,19 +4,18 @@
   "description": "Currency conversion microservice with Express",
   "main": "index.js",
   "scripts": {
-    "cover": "NODE_ENV=test istanbul cover -x '*test.js' _mocha -- -R spec",
-    "check-coverage": "istanbul check-coverage --statements 90 --branches 90 --functions 90 --lines 90",
-    "check-lint": "eslint *.js lib/*.js test/*.js routes/*.js",
-    "fix-lint": "eslint --fix *.js lib/*.js test/*.js routes/*.js",
-    "eureka": "docker start eureka 2> /dev/null || docker run -d -p 8080:8080 --name eureka netflixoss/eureka:1.3.1",
+    "cover": "NODE_ENV=test istanbul cover -x '*test.js' _mocha -- -R spec -r 'dotenv/config' --timeout 120000 --exit | pino",
+    "check-coverage": "istanbul check-coverage --statements 90 --branches 90 --functions 90 --lines 90 -- -R spec -r 'dotenv/config' --timeout 120000 --exit | pino",
+    "check-lint": "eslint *.js lib/*.js routes/*.js",
+    "fix-lint": "eslint --fix *.js lib/*.js routes/*.js",
+    "eureka": "docker start eureka 2> /dev/null || docker run -d -p 8761:8761 --name eureka netflixoss/eureka:1.3.1",
     "print-docker-image-name": "node -p \"const {name, version}=require('./package');name+':'+version\"",
     "docker-build": "docker build -t $(node -p \"const {name, version}=require('./package');name+':'+version\") .",
     "start": "NODE_ENV=production node -r 'dotenv/config' cluster.js",
     "fake-config-server-start": "npm run fake-config-server-stop &> /dev/null; sleep 1; fake-config-server >> logs/fake-config-server.log 2>&1 & echo PID=$!",
     "fake-config-server-stop": "killall -9 fakeConfigServer",
     "dev": "nodemon -r 'dotenv/config' cluster.js || echo 'Please install nodemon globaly' && echo npm install -g nodemon",
-    "test": "NODE_ENV=test LOG_LEVEL=test mocha -R spec",
-    "local": "LOG_LEVEL=debug node -r 'dotenv/config' cluster.js"
+    "test": "NODE_ENV=test LOG_LEVEL=test mocha -R spec -r 'dotenv/config' --timeout 6000 --full-trace --exit"
   },
   "config": {
     "ghooks": {

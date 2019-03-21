@@ -1,11 +1,14 @@
 'use strict';
 
 // https://nodejs.org/api/process.html#process_process_title
+
+require('dotenv').config();
+
 process.title = `app-master-${require('./package.json').version}`;
 require('@everymundo/global-root-dir').setGlobalRootDir(__dirname);
 
+
 const logr     = require('em-logr').create({name: '{MASTER}'});
-const { run }  = require('@everymundo/runner');
 
 const {
   forkAWorker,
@@ -13,10 +16,15 @@ const {
   createWorkers,
   configClusterEvents,
   configKillSignals,
+  configureTracer,
   registerToEureka,
+  handleUnhandled,
 } = require('./cluster-features');
 
+const {loadConfig} = require('./lib/spring');
+
 function initMaster(cluster) {
+  handleUnhandled();
   savePidFile();
   createWorkers(cluster);
   configClusterEvents(cluster);
@@ -25,6 +33,7 @@ function initMaster(cluster) {
 }
 
 function initWorker() {
+  handleUnhandled();
   logr.debug('loading server');
   const server = require('./server');
 
@@ -54,4 +63,51 @@ module.exports = {
   init,
 };
 
-run(__filename, init, require('cluster'));
+
+// run(
+//   __filename,
+//   () => {
+//     require('dotenv').config();
+//     loadConfig()
+//       .then(() => configureTracer())
+//       .then(() => {
+//         const {getEurekaClient} = require('./lib/eureka');
+//         return getEurekaClient();
+//       })
+//       .catch((error) => {
+//         logr.error(error);
+//         throw error;
+//       })
+//       .then(() => initWorker())
+//       .catch((error) => {
+//         logr.error(error);
+//         throw error;
+//       })
+//       .then()
+//       .catch((error) => {
+//         logr.error(error);
+//         throw error;
+//       });
+//   }
+// );
+
+loadConfig()
+  .then(() => configureTracer())
+  .then(() => {
+    const {getEurekaClient} = require('./lib/eureka');
+    return getEurekaClient();
+  })
+  .catch((error) => {
+    logr.error(error);
+    throw error;
+  })
+  .then(() => initWorker())
+  .catch((error) => {
+    logr.error(error);
+    throw error;
+  })
+  .then()
+  .catch((error) => {
+    logr.error(error);
+    throw error;
+  });

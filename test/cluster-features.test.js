@@ -1,4 +1,4 @@
-'require strict';
+'use strict';
 
 require('./test-setup.js');
 
@@ -189,7 +189,13 @@ describe('cluster-features.js', () => {
       beforeEach(() => {
         calledWithArgs = undefined;
         box.stub(emEurekaLib, 'asyncClientFromConfigService')
-          .callsFake(args => new Promise((resolve) => { calledWithArgs = args; resolve({config:{status:'connected'}}); }));
+          .callsFake(args => new Promise((resolve) => {
+            calledWithArgs = args;
+            resolve({
+              config: {status:'connected'},
+              start: () => {new Promise((resolve) => {resolve();})},
+            });
+          }));
       });
 
       it('should call asyncClientFromConfigService and resolve', () => {
@@ -198,7 +204,6 @@ describe('cluster-features.js', () => {
         return registerToEureka().then(() => {
           expect(emEurekaLib.asyncClientFromConfigService).to.have.property('calledOnce', true);
           expect(calledWithArgs).to.have.property('port');
-          expect(calledWithArgs).to.have.property('securePort');
         });
       });
     });
@@ -218,7 +223,6 @@ describe('cluster-features.js', () => {
         return registerToEureka().catch(() => {
           expect(emEurekaLib.asyncClientFromConfigService).to.have.property('calledOnce', true);
           expect(calledWithArgs).to.have.property('port');
-          expect(calledWithArgs).to.have.property('securePort');
         });
       });
     });

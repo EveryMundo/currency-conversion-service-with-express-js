@@ -1,4 +1,4 @@
-'require strict';
+'use strict';
 
 /* eslint-disable no-unused-expressions */
 require('./test-setup.js');
