@@ -1,15 +1,17 @@
 'use strict';
 
 require('@everymundo/global-root-dir').setGlobalRootDir(__dirname);
-const helmet = require('helmet');
-const bodyParser = require('body-parser');
-const logr = require('em-logr').create({name: 'WORKER'});
-const {run} = require('@everymundo/runner');
-const { loadConfig }          = require('./lib/spring');
-const {setupSwagger} = require('./lib/setup-swagger');
-const {registerRoutes} = require('./routes/index');
+const bodyparser              = require('body-parser');
+const helmet                  = require('helmet');
 
-const {listen, stopWorker, setProcessEvents} = require('./server-features');
+const logr                    = require('em-logr').create({ name: 'WORKER'});
+const { run }                 = require('@everymundo/runner');
+// const { setupSwagger }        = require('./lib/setup-swagger');
+const { loadConfig }          = require('./lib/spring');
+const { getCheckJwtMiddleware, respondWithUnauthorizedError }  = require('./lib/auth0');
+const { registerRoutes }      = require('./routes/index');
+
+const { listen, stopWorker, setProcessEvents } = require('./server-features');
 
 /**
  * Loads the middleware except request validator and its associated error handler
@@ -17,8 +19,12 @@ const {listen, stopWorker, setProcessEvents} = require('./server-features');
  * @returns require('express').app
  */
 const expressMiddleware = (express) => {
+  express.use(bodyparser.json({limit: '250mb'}));
+  express.use(bodyparser.urlencoded());
   express.use(helmet());
-  express.use(bodyParser.json());
+  express.use(getCheckJwtMiddleware());
+  express.use(respondWithUnauthorizedError);
+
   return express;
 };
 
@@ -29,21 +35,45 @@ const dealWithErrors = express => (error) => {
   return express;
 };
 
+function loadServer() {
+  return new Promise((resolve, reject) => {
+    const { express } = require('./lib/express-singleton');
+    setProcessEvents(express)
+      .then(expressMiddleware)
+      .then(registerRoutes)
+      .then(app => resolve(listen(app)))
+      .catch(err => reject(err));
+  });
+}
+
 const init = () => {
   logr.debug('initializing express');
-  const {express} = require('./lib/express-singleton');
+  const { express } = require('./lib/express-singleton');
+
+  // const heapdump = require('heapdump');
 
   return loadConfig()
-    .then(() => setProcessEvents(express))
-    .then(expressMiddleware)
-    .then(registerRoutes)
-    .then(setupSwagger)
-    .then(listen)
-    .catch(dealWithErrors);
+    // .then(() => {
+    //   setInterval(() => {heapdump.writeSnapshot('/home/vince/Desktop/heapdumps/heapdump-' + Date.now() + '.heapsnapshot')},
+    //     150000
+    //   );
+    // })
+    .then(() => loadServer)
+    .then(() => enforceGarbageCollection())
+    .catch(dealWithErrors(express));
+};
+
+
+const enforceGarbageCollection = () => {
+  setInterval(() => {
+    logr.info('Garbage collecting');
+    global.gc();
+  }, 1800000);
 };
 
 module.exports = {
   init,
+  loadServer,
   dealWithErrors,
 };
 

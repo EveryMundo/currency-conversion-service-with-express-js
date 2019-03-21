@@ -1,18 +1,16 @@
 'use strict';
 
 const {env}  = process;
+const packaJ = require('./package.json');
 const micro  = require('microtime');
 const ip     = require('ip');
-const packaJ = require('./package.json');
 
 const defaults = {
   APP_PORT: ~~(Math.random() * 64000), // eslint-disable-line no-bitwise
   APP_SEC_PORT: ~~(Math.random() * 64000), // eslint-disable-line no-bitwise
   APP_IP: require('ip').address(),
   LOG_LEVEL: 'info',
-  NUM_OF_WORKERS: require('os').cpus().length,
-  SPRING_PROFILES_ACTIVE: 'local-dev',
-  SPRING_CLOUD_CONFIG_URI: 'http://localhost:8888',
+  NUM_OF_WORKERS: 1,
 };
 
 const { isValidLogLevel, getPortFromFile, savePortToFile } = require('./config-support');
@@ -28,11 +26,7 @@ const APP_IP = ip.isV4Format(env.APP_IP) ? env.APP_IP : defaults.APP_IP;
 
 const LOG_LEVEL = isValidLogLevel(env.LOG_LEVEL) ? env.LOG_LEVEL : defaults.LOG_LEVEL;
 
-const NUM_OF_WORKERS = Math.abs(env.NUM_OF_WORKERS) || defaults.NUM_OF_WORKERS;
-
-const SPRING_PROFILES_ACTIVE = env.SPRING_PROFILES_ACTIVE || defaults.SPRING_PROFILES_ACTIVE;
-
-const SPRING_CLOUD_CONFIG_URI = env.SPRING_CLOUD_CONFIG_URI || defaults.SPRING_CLOUD_CONFIG_URI;
+const NUM_OF_WORKERS = 1;
 
 const config = {
   APP_PORT,
@@ -40,8 +34,6 @@ const config = {
   APP_IP,
   LOG_LEVEL,
   NUM_OF_WORKERS,
-  SPRING_PROFILES_ACTIVE,
-  SPRING_CLOUD_CONFIG_URI,
   datacore: {
     AUTHORIZATION: env.AUTHORIZATION,
     URI: env.DATACORE_URI,
@@ -52,9 +44,6 @@ const config = {
       app:        packaJ.name,
       hostName:   env.EUREKA_APP_HOSTNAME,
       ipAddr:     env.EUREKA_APP_IP_ADDR,
-      // statusPageUrl,
-      port:       APP_PORT,
-      securePort: APP_SEC_PORT,
       vipAddress: env.EUREKA_VIP_ADDRESS,
     },
     host: env.EUREKA_HOST,

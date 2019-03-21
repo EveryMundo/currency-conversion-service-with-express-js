@@ -1,4 +1,4 @@
-'require strict';
+'use strict';
 
 /* eslint-disable no-unused-expressions */
 
@@ -9,7 +9,7 @@ const
   request = require('supertest'),
   cleanrequire = require('@everymundo/cleanrequire');
 
-describe('fastify.server.js', () => {
+describe.only('express server', () => {
   const
     testFile = '../server.js',
     dataFile = require('../data/index'),
@@ -45,26 +45,28 @@ describe('fastify.server.js', () => {
   // retores the sandbox
   afterEach(() => {
     box.restore();
-    if (express) {
-      const s = express.listen();
+    if (express && express.server) {
+      const s = express.server.listen();
       s.close();
     }
   });
 
-  context('get /info', () => {
+  context.only('get /info', () => {
     it('it should call get /info', (done) => {
       express = cleanrequire(testFile);
-      express.init().then((app) => {
-        request(app).get('/info').expect('Content-Type', /json/)
-          .expect(200, done);
-      });
+      express.loadServer()
+        .then((app) => {
+          request(app).get('/info').expect('Content-Type', /json/)
+            .expect(200, done);
+        })
+        .catch((error) => { done(error); });
     });
   });
 
   context('get /healthcheck', () => {
     it('it should call get /healthcheck', (done) => {
       express = cleanrequire(testFile);
-      express.init().then((app) => {
+      express.loadServer().then((app) => {
         request(app).get('/healthcheck')
           .expect('Content-Type', /json/)
           .expect(200, done);
@@ -77,7 +79,7 @@ describe('fastify.server.js', () => {
       const url = '/convert?value=1000&from=EUR&to=USD';
       it('should export expected functions', (done) => {
         express = cleanrequire(testFile);
-        express.init().then((app) => {
+        express.loadServer().then((app) => {
           const expected = {
             fixed: '1199.47',
             from: 'EUR',
@@ -96,7 +98,7 @@ describe('fastify.server.js', () => {
       const url = '/convert?value=1000&to=USD';
       it(`requesting ${url} should fail`, (done) => {
         express = cleanrequire(testFile);
-        express.init().then((app) => {
+        express.loadServer().then((app) => {
           request(app).get(url).expect(500, {error: 'Unknown currency code [UNDEFINED] in from'}, done);
         });
       });
@@ -106,7 +108,7 @@ describe('fastify.server.js', () => {
       const url = '/convert?value=1000&from=USD';
       it(`requesting ${url} should fail`, (done) => {
         express = cleanrequire(testFile);
-        express.init().then((app) => {
+        express.loadServer().then((app) => {
           request(app).get(url).expect(500, {error: 'Unknown currency code [UNDEFINED] in to'}, done);
         });
       });
@@ -115,7 +117,7 @@ describe('fastify.server.js', () => {
       const url = '/convert?from=EUR&to=USD';
       it(`requesting ${url} should fail`, (done) => {
         express = cleanrequire(testFile);
-        express.init().then((app) => {
+        express.loadServer().then((app) => {
           request(app).get(url).expect(500, {error: 'Invalid value [NaN]'}, done);
         });
       });
@@ -128,7 +130,7 @@ describe('fastify.server.js', () => {
 
       it('should export expected functions', (done) => {
         express = cleanrequire(testFile);
-        express.init().then((app) => {
+        express.loadServer().then((app) => {
           const expected = {
             fixed: '1199.47',
             from: 'EUR',
@@ -145,7 +147,7 @@ describe('fastify.server.js', () => {
       const url = '/convert/something-that-does-not-match';
       it(`requesting ${url} should fail`, (done) => {
         express = cleanrequire(testFile);
-        express.init().then((app) => {
+        express.loadServer().then((app) => {
           request(app).get(url).expect(500, {error: 'Invalid expression \'something-that-does-not-match\''}, done);
         });
       });

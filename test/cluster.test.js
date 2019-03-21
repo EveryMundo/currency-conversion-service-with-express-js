@@ -1,4 +1,4 @@
-'require strict';
+'use strict';
 
 require('./test-setup.js');
 
@@ -7,6 +7,11 @@ const
   sinon    = require('sinon'),
   {expect} = require('chai');
   // clone    = arg => JSON.parse(JSON.stringify(arg));
+
+before(async () => {
+  require('dotenv').config();
+  await require('../lib/spring').loadConfig();
+});
 
 describe('cluster.js', () => {
   const
@@ -50,7 +55,8 @@ describe('cluster.js', () => {
 
     beforeEach(() => {
       result = [];
-      clusterFeaturesFunctionNames.forEach(func => box.stub(clusterFeaturesLib, func).callsFake(() => { result.push(func); }));
+      clusterFeaturesFunctionNames.forEach(func =>
+        box.stub(clusterFeaturesLib, func).callsFake(() => { result.push(func); }));
     });
 
     it('should call cluster features functions in order passing the cluster arg', () => {
@@ -65,8 +71,9 @@ describe('cluster.js', () => {
         'configClusterEvents',
         'configKillSignals',
         'registerToEureka',
-      ].forEach(func => expect(clusterFeaturesLib[func].calledWith(cluster))
-        .to.equal(true, `${func} did not receive correct cluster argument`));
+      ].forEach(func =>
+        expect(clusterFeaturesLib[func].calledWith(cluster))
+          .to.equal(true, `${func} did not receive correct cluster argument`));
     });
   });
 
@@ -99,7 +106,8 @@ describe('cluster.js', () => {
 
       beforeEach(() => {
         result = [];
-        clusterFeaturesFunctionNames.forEach(func => box.stub(clusterFeaturesLib, func).callsFake(() => { result.push(func); }));
+        clusterFeaturesFunctionNames.forEach(func =>
+          box.stub(clusterFeaturesLib, func).callsFake(() => { result.push(func); }));
       });
 
       it('should call initMaster', () => {

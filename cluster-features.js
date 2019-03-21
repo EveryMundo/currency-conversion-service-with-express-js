@@ -7,10 +7,9 @@ const ddTracer = require('dd-trace');
 
 const { getMajorVersionNumber } = require('@everymundo/generate-microservice-name');
 
-const logr     = require('em-logr').create({name: '{MASTER}'});
-
 const {config} = require('./config');
 
+const logr     = require('em-logr').create({name: '{MASTER}'});
 
 function forkAWorker(cluster) {
   const worker = cluster.fork();
@@ -18,6 +17,15 @@ function forkAWorker(cluster) {
 }
 
 function createWorkers(cluster) {
+  // const messageManager = {};
+  // // Fork workers.
+  // cluster.on('message', (worker, message) => {
+  //   logr.debug('MESSAGE FROM Worker', message.type || message);
+  //   if (message.type in messageManager) {
+  //     return messageManager[message.type](message);
+  //   }
+  // });
+
   for (let i = 0; i < config.NUM_OF_WORKERS; i++) {
     forkAWorker(cluster);
   }
@@ -61,11 +69,10 @@ const registerToEureka = () => {
     .catch((error) => { throw error; });
 };
 
-const handleUnhandled = (cluster) => {
-  process.on('unhandledRejection', (err, p) => {
-    logr.error('An Unhandled Rejection occurred in promise ', p);
-    logr.error(err);
-    setTimeout(forkAWorker, 1000, cluster);
+const handleUnhandled = () => {
+  process.on('unhandledRejection', (err) => {
+    logr.error('An Unhandled Rejection occurred', err);
+    process.exit(1);
   });
 };
 
@@ -76,6 +83,8 @@ const configureTracer = () => {
     tags: {platform: 'nodejs'},
   });
   tracer.use('express');
+  tracer.use('amqplib');
+  tracer.use('mongodb-core');
   return tracer;
 };
 
