@@ -3,39 +3,49 @@
 // asserting this file is properly located
 require('assert')(__filename.includes('/convert/get.js'));
 
-const data = require('../../data').update();
+const data = require('../../data').data;
 
 const url = '/convert';
 
 const method = require(`${global.__rootdir}/lib/get-method-from-filename`)(__filename);
 
 const handler = (req, reply) => {
-  const {value, from, to} = req.query;
+  try {
+    const {value, from, to} = req.params;
 
-  // getting the usdValue first
-  const usdValue = value / data.rates[from];
-  // calculating the conversion value
-  const result = usdValue * data.rates[to];
+    if (value === undefined || from === undefined || to === undefined) {
+      reply.status(400);
+      reply.json({err: 'bad inputs'});
+    }
 
-  const fixed = result.toFixed(2);
+    // getting the usdValue first
+    const usdValue = value / data.rates[from];
+    // calculating the conversion value
+    const result = usdValue * data.rates[to];
 
-  // sending the result;
-  reply.send({
-    value, from, to, result, fixed,
-  });
+    const fixed = result.toFixed(2);
+
+    // sending the result;
+    reply.json({
+      value, from, to, result, fixed,
+    });
+  } catch (error) {
+    reply.status(400);
+    reply.json(error);
+  }
 };
 
 const beforeHandler = (req, res, next) => {
-  const {query} = req;
+  const {params} = req;
 
-  query.value = +query.value;
-  query.from  = ('' + query.from).toUpperCase();
-  query.to    = ('' + query.to).toUpperCase();
+  params.value = +params.value;
+  params.from  = ('' + params.from).toUpperCase();
+  params.to    = ('' + params.to).toUpperCase();
 
   // eslint-disable-next-line no-restricted-globals
-  if (isNaN(query.value)) res.status(500).send({ error:`Invalid value [${query.value}]`});
-  if (!(query.from in data.rates)) res.status(500).send({ error:`Unknown currency code [${query.from}] in from`});
-  if (!(query.to   in data.rates)) res.status(500).send({ error:`Unknown currency code [${query.to}] in to`});
+  if (isNaN(params.value)) res.status(500).send({ error:`Invalid value [${params.value}]`});
+  if (!(params.from in data.rates)) res.status(500).send({ error:`Unknown currency code [${params.from}] in from`});
+  if (!(params.to   in data.rates)) res.status(500).send({ error:`Unknown currency code [${params.to}] in to`});
 
   next();
 };

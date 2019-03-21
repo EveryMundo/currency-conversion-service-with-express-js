@@ -230,5 +230,5 @@ const update = () => {
  */
 module.exports = {
   get data() { return data; },
-  update: () => (data),
+  update: () => data,
 };

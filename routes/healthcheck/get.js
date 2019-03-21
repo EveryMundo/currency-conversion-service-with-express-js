@@ -9,7 +9,7 @@ const method = require(`${global.__rootdir}/lib/get-method-from-filename`)(__fil
 
 const handler = (req, reply) => {
   // sending the result;
-  reply.send({ healthy: true, pid: process.pid });
+  reply.json({ healthy: true, pid: process.pid });
 };
 
 const schema = {
