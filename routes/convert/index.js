@@ -3,5 +3,4 @@ require('assert')(__filename.includes('/convert/index.js'));
 
 module.exports = {
   'get /convert':      require('./get'),
-  'get /convert/expr': require('./expr/get'),
 };
