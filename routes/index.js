@@ -17,13 +17,15 @@ const routes = {
  * Default response for unsupported methods. Status 405
  */
 const unsupportedResponse = (req, res) => {
-  res.status(405).json({err: true, reason: 'Unsupported method'});
+  res.status(405).json({err: true, msg: 'Unsupported method'});
 };
+
 const expressUnexpectedError = (err, req, res, next) => {
   if (err) {
     logr.error(err);
     res.status(500);
     res.json({
+      err: true,
       msg: 'Unexpected error' + err,
       request: req.body,
     });
@@ -32,10 +34,11 @@ const expressUnexpectedError = (err, req, res, next) => {
   }
 };
 
-const expressPageNotFound = (req, res) => {
+const expressPageNotFound = (req, res) =>   {
   logr.error({status: 404, req});
   res.status(404);
   res.json({
+    err: true,
     msg: 'Page not found',
     request: req.originalUrl,
   });
@@ -88,4 +91,7 @@ const registerRoutes = async (express) => {
 module.exports = {
   routes,
   registerRoutes,
+  unsupportedResponse,
+  expressUnexpectedError,
+  expressPageNotFound,
 };

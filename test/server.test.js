@@ -12,8 +12,7 @@ const
 describe('server.js', () => {
   const
     testFile = '../server.js',
-    // dataFile = require('../data/index'),
-    logr = require('em-logr'),
+    logr = cleanrequire('em-logr'),
     noop = () => {};
 
   let box;
@@ -22,129 +21,83 @@ describe('server.js', () => {
   beforeEach(() => {
     // creates sinon sandbox
     box = sinon.createSandbox();
+
     clock = sinon.useFakeTimers();
-    // box.stub(dataFile, 'update').callsFake(noop);
-    // box.stub(logr, 'create').callsFake(() => logr);
+    box.stub(logr, 'create').callsFake(() => logr);
     // stubs the logr to stop logging during tests
     ['debug', 'info', 'warn', 'error', 'fatal']
       .forEach((level) => { box.stub(logr, level).callsFake(noop); });
-    box.stub(require('../lib/spring'), 'config').value({
-      auth0: {
-        issuer: 'issuer',
-        audience: 'audience',
-      }
-    })
   });
 
   // retores the sandbox
   afterEach(() => {
-    box.restore();
     clock.restore();
+    box.restore();
+    sinon.restore();
   });
 
   context('on load', () => {
     it('should export expected functions', () => {
-      const server = require(testFile);
+      const server = cleanrequire(testFile);
       expect(server.init).to.be.instanceof(Function);
     });
   });
 
-  // describe('#fastifyReady', () => {
-  //   let fastifyReady;
-  //   let fakeFastify;
-  //   beforeEach(() => {
-  //     // eslint-disable-next-line prefer-destructuring
-  //     fastifyReady = require(testFile).fastifyReady;
-
-  //     fakeFastify = {
-  //       ready: sinon.spy(fn => fn()),
-  //       swagger: sinon.spy(() => {}),
-  //       server: {
-  //         address: () => ({port: 9999}),
-  //       },
-  //     };
-  //   });
-
-  //   context('no error', () => {
-  //     it('should call fastify.ready()', () => {
-  //       fastifyReady(fakeFastify);
-
-  //       expect(fakeFastify.ready).to.have.property('calledOnce', true);
-  //     });
-
-  //     it('should call fastify.swagger()', () => {
-  //       fastifyReady(fakeFastify);
-
-  //       expect(fakeFastify.swagger).to.have.property('calledOnce', true);
-  //     });
-  //   });
-
-  //   context('WITH ERROR', () => {
-  //     it('should throw the error', () => {
-  //       const error = new Error('Ready Error');
-  //       fakeFastify.ready = fn => fn(error);
-
-  //       const caller = () => fastifyReady(fakeFastify);
-
-  //       expect(caller).to.throw(error);
-  //     });
-  //   });
-  // });
-
   describe('init', () => {
-    let
-      setProcessEvents,
-      setupSwagger,
-      registerRoutes,
-      listen,
-      stopWorker,
-      results;
-
-    const sf = require('../server-features');
-    const rr = require('../routes');
-    const ss = require('../lib/setup-swagger');
-    // const singFast = require('../lib/fastify-singleton');
+    let listen;
+    let expressMiddleware;
+    let dealWithErrors;
+    let setProcessEvents;
+    let setupSwagger;
+    let registerRoutes;
+    let stopWorker;
+    let results;
+    let box;
 
     before(() => {
-      results = [];
+      const sf = cleanrequire('../server-features');
+      const rr = cleanrequire('../routes');
+      const ss = cleanrequire('../lib/setup-swagger');
+      const expressSingleton = cleanrequire('../lib/express-singleton');
+      box = sinon.createSandbox();
 
+      results = [];
+      expressMiddleware   = sinon.spy(async () => results.push('expressMiddleware'));
+      dealWithErrors      = sinon.spy(async () => results.push('dealWithErrors'));
       setProcessEvents    = sinon.spy(async () => results.push('setProcessEvents'));
       setupSwagger        = sinon.spy(async () => results.push('setupSwagger'));
       registerRoutes      = sinon.spy(async () => results.push('registerRoutes'));
       listen              = sinon.spy(async () => results.push('listen'));
-      stopWorker          = sinon.spy(async () => results.push('stopWorker'));
 
+      box.stub(cleanrequire('../lib/spring'), 'loadConfig').resolves({
+        auth0: {
+          issuer: 'fakeissuer',
+          audience: 'fakeaudience',
+        },
+      });
+      box.stub(cleanrequire('../lib/spring'), 'config').value({
+        auth0: {
+          issuer: 'fakeissuer',
+          audience: 'fakeaudience',
+        },
+      });
+      box.stub(sf, 'listen').callsFake(listen);
       box.stub(sf, 'setProcessEvents').callsFake(setProcessEvents);
       box.stub(rr, 'registerRoutes').callsFake(registerRoutes);
-      box.stub(sf, 'listen').callsFake(listen);
       box.stub(sf, 'stopWorker').callsFake(stopWorker);
       box.stub(ss, 'setupSwagger').callsFake(setupSwagger);
-
-      // box.stub(singFast, 'fastify').value({
-
-      // });
+      box.stub(expressSingleton, 'express').value({
+        use: () => {},
+      });
     });
 
-    it.skip('call all the features functions in order', () => {
-      const spies = {
-        setProcessEvents,
-        setupSwagger,
-        registerRoutes,
-        listen,
-        stopWorker,
-      };
-      const exp = Object.keys(spies);
-
-      const {init} = cleanrequire(testFile);
-      return init()
-        .then(() => {
-          expect(results).deep.equal(exp);
-
-          expect(setProcessEvents).to.have.property('calledOnce', true);
-          expect(listen).to.have.property('calledOnce', true);
-          expect(stopWorker).to.have.property('calledOnce', true);
-          expect(setProcessEvents).to.have.property('calledOnce', true);
-        });
+    it('call all the features functions in order', async () => {
+      const {loadServer} = cleanrequire(testFile);
+      await loadServer();
+      expect(listen).to.have.property('calledOnce', true);
+      expect(setProcessEvents).to.have.property('calledOnce', true);
+      expect(registerRoutes).to.have.property('calledOnce', true);
+      expect(setupSwagger).to.have.property('calledOnce', true);
     });
   });
 });
