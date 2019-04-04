@@ -6,7 +6,7 @@ const helmet                  = require('helmet');
 
 const logr                    = require('em-logr').create({ name: 'WORKER'});
 const { run }                 = require('@everymundo/runner');
-// const { setupSwagger }        = require('./lib/setup-swagger');
+const { setupSwagger }        = require('./lib/setup-swagger');
 const { loadConfig }          = require('./lib/spring');
 const { getCheckJwtMiddleware, respondWithUnauthorizedError }  = require('./lib/auth0');
 const { registerRoutes }      = require('./routes/index');
@@ -36,13 +36,17 @@ const dealWithErrors = express => (error) => {
 };
 
 function loadServer() {
-  return new Promise((resolve, reject) => {
-    const { express } = require('./lib/express-singleton');
-    setProcessEvents(express)
-      .then(expressMiddleware)
-      .then(registerRoutes)
-      .then(app => resolve(listen(app)))
-      .catch(err => reject(err));
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { express } = require('./lib/express-singleton');
+      await setProcessEvents(express);
+      await expressMiddleware(express);
+      const app = await registerRoutes(express);
+      await setupSwagger(express);
+      resolve(listen(app));
+    } catch (error) {
+      reject(error);
+    }
   });
 }
 

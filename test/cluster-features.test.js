@@ -5,8 +5,8 @@ require('./test-setup.js');
 const
   sinon    = require('sinon'),
   {expect} = require('chai');
-  // cleanrequire = require('@everymundo/cleanrequire'),
-  // clone    = arg => JSON.parse(JSON.stringify(arg));
+// cleanrequire = require('@everymundo/cleanrequire'),
+// clone    = arg => JSON.parse(JSON.stringify(arg));
 
 describe('cluster-features.js', () => {
   const
@@ -24,7 +24,10 @@ describe('cluster-features.js', () => {
   });
 
   // retores the sandbox
-  afterEach(() => { box.restore(); });
+  afterEach(() => {
+    sinon.restore();
+    box.restore();
+  });
 
   const server = require('../cluster-features');
 
@@ -107,7 +110,6 @@ describe('cluster-features.js', () => {
     it('should call process.on', (done) => {
       const send = sinon.spy((obj) => {
         expect(obj).to.have.property('type', 'stop');
-        done();
       });
 
       const cluster = {
@@ -117,6 +119,7 @@ describe('cluster-features.js', () => {
       configKillSignals(cluster);
 
       expect(process.on).to.have.property('calledOnce', true);
+      done();
     });
   });
 
@@ -189,21 +192,16 @@ describe('cluster-features.js', () => {
       beforeEach(() => {
         calledWithArgs = undefined;
         box.stub(emEurekaLib, 'asyncClientFromConfigService')
-          .callsFake(args => new Promise((resolve) => {
-            calledWithArgs = args;
-            resolve({
-              config: {status:'connected'},
-              start: () => {new Promise((resolve) => {resolve();})},
-            });
-          }));
+          .callsFake(args => new Promise((resolve) => { calledWithArgs = args; resolve({config:{status:'connected'}}); }));
       });
 
-      it('should call asyncClientFromConfigService and resolve', () => {
+      it('should call asyncClientFromConfigService and resolve', (done) => {
         const { registerToEureka } = server;
 
-        return registerToEureka().then(() => {
+        registerToEureka().then(() => {
           expect(emEurekaLib.asyncClientFromConfigService).to.have.property('calledOnce', true);
           expect(calledWithArgs).to.have.property('port');
+          done();
         });
       });
     });
@@ -223,6 +221,7 @@ describe('cluster-features.js', () => {
         return registerToEureka().catch(() => {
           expect(emEurekaLib.asyncClientFromConfigService).to.have.property('calledOnce', true);
           expect(calledWithArgs).to.have.property('port');
+          // expect(calledWithArgs).to.have.property('securePort');
         });
       });
     });

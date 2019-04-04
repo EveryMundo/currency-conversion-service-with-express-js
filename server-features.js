@@ -4,18 +4,24 @@ const {config} = require('./config');
 const logr     = require('em-logr').create({ name: 'WORKER'});
 
 const listen = express => new Promise((resolve, reject) => {
-  logr.debug(`listening to http://0.0.0.0:${config.APP_PORT}`);
-  const server = express.listen(config.APP_PORT, config.APP_IP, (err) => {
-    logr.debug('listening to ', config.APP_PORT);
+  try {
+    logr.debug(`listening to http://0.0.0.0:${config.APP_PORT}`);
+    express.listen(config.APP_PORT, config.APP_IP, (err) => {
+      logr.debug('listening to ', config.APP_PORT);
 
-    if (err) {
-      logr.error(err);
-      return reject(err);
-    }
+      if (err) {
+        console.log(err);
+        logr.error(err);
+        return reject(err);
+      }
 
-    logr.info(`server listening on ${server.address().port}`);
-    resolve(express);
-  });
+      // logr.info(`server listening on ${server.address().port}`);
+      resolve(express);
+    });
+  } catch (error) {
+    logr.error(error);
+    reject(error);
+  }
 });
 
 const stopWorker = (express) => {
@@ -35,6 +41,7 @@ const setEventsFromMaster = (express) => {
       return stopWorker(express);
     }
   });
+  return express;
 };
 
 const setProcessEvents = async (express) => {
