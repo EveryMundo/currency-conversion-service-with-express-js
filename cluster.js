@@ -97,15 +97,7 @@ loadConfig()
     const {getEurekaClient} = require('./lib/eureka');
     return getEurekaClient();
   })
-  .catch((error) => {
-    logr.error(error);
-    throw error;
-  })
   .then(() => initWorker())
-  .catch((error) => {
-    logr.error(error);
-    throw error;
-  })
   .then()
   .catch((error) => {
     logr.error(error);
