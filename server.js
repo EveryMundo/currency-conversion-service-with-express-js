@@ -28,7 +28,7 @@ const expressMiddleware = (express) => {
   return express;
 };
 
-const dealWithErrors = express => (error) => {
+const dealWithErrors = (express, error) => {
   logr.error(error);
   stopWorker();
 

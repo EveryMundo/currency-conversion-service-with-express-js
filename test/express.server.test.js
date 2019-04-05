@@ -96,24 +96,25 @@ describe('express server', () => {
     const expressSingleton = cleanrequire('../lib/express-singleton.js');
 
     before(() => {
-      box.stub(expressSingleton, 'express').value({
+      const expressValue = {
         use: () => {},
-      });
-      const httpMethods = [
+        get: () => {},
+        post: () => {},
+      };
+      [
         'checkout', 'copy', 'delete', 'get', 'head', 'lock',
         'merge', 'mkactivity', 'mkcol', 'move', 'm-search', 'notify',
         'options', 'patch', 'post', 'purge', 'put', 'report',
         'search', 'subscribe', 'trace', 'unlock', 'unsubscribe',
-      ];
-      httpMethods.forEach((method) => {
-        expressSingleton.express[method] = null;
-        box.stub(expressSingleton.express, method).callsFake(noop);
+      ].forEach((method) => {
+        expressValue[method] = () => {};
       });
+      sinon.stub(expressSingleton, 'express').value(expressValue);
     });
 
     it('should register all of the appropriate routes', async () => {
       const {registerRoutes} = cleanrequire('../routes/index');
-      await registerRoutes(express);
+      await registerRoutes(expressSingleton.express);
     });
   });
 
@@ -126,8 +127,17 @@ describe('express server', () => {
     }
   });
 
+  context('get /root', () => {
+    it('should call get root', async () => {
+      const reply = new Reply();
+
+      const {handler} = cleanrequire('../routes/root/get');
+      await handler({}, reply);
+    });
+  });
+
   context('get /info', () => {
-    it('it should call get /info', async () => {
+    it('should call get /info', async () => {
       const reply = new Reply();
 
       const {handler} = cleanrequire('../routes/info/get');
@@ -137,7 +147,7 @@ describe('express server', () => {
   });
 
   context('get /healthcheck', () => {
-    it('it should call get /healthcheck', async () => {
+    it('should call get /healthcheck', async () => {
       const reply = new Reply();
 
       const {handler} = cleanrequire('../routes/healthcheck/get');
