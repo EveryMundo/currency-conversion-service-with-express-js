@@ -35,21 +35,6 @@ const handler = (req, reply) => {
   }
 };
 
-const beforeHandler = (req, res, next) => {
-  const {params} = req;
-
-  params.value = +params.value;
-  params.from  = ('' + params.from).toUpperCase();
-  params.to    = ('' + params.to).toUpperCase();
-
-  // eslint-disable-next-line no-restricted-globals
-  if (isNaN(params.value)) res.status(500).send({ error:`Invalid value [${params.value}]`});
-  if (!(params.from in data.rates)) res.status(500).send({ error:`Unknown currency code [${params.from}] in from`});
-  if (!(params.to   in data.rates)) res.status(500).send({ error:`Unknown currency code [${params.to}] in to`});
-
-  next();
-};
-
 const schema = {
   description: 'It returns the value converted',
   tags: [require(`${global.__rootdir}/package.json`).name],
@@ -68,4 +53,4 @@ const schema = {
   },
 };
 
-module.exports = { url, beforeHandler, handler, schema, method };
+module.exports = { url, handler, schema, method };
