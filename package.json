@@ -1,6 +1,6 @@
 {
   "name": "currency-conversion-service-with-express-js",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Currency conversion microservice with Express",
   "main": "index.js",
   "scripts": {
@@ -19,8 +19,7 @@
     "test-dev": "nodemon --exec \"NODE_ENV=test LOG_LEVEL=test mocha -R spec -r 'dotenv/config' --timeout 10000 --exit\""
   },
   "config": {
-    "ghooks": {
-    }
+    "ghooks": {}
   },
   "repository": {
     "type": "git",
