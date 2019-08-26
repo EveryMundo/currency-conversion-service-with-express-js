@@ -11,6 +11,8 @@ const defaults = {
   APP_IP: require('ip').address(),
   LOG_LEVEL: 'info',
   NUM_OF_WORKERS: 1,
+  SPRING_PROFILES_ACTIVE: 'aws',
+  SPRING_CLOUD_CONFIG_URI: 'http://localhost:54321',
 };
 
 const { isValidLogLevel, getPortFromFile, savePortToFile } = require('./config-support');
@@ -28,12 +30,18 @@ const LOG_LEVEL = isValidLogLevel(env.LOG_LEVEL) ? env.LOG_LEVEL : defaults.LOG_
 
 const NUM_OF_WORKERS = 1;
 
+const SPRING_PROFILES_ACTIVE = env.SPRING_PROFILES_ACTIVE || defaults.SPRING_PROFILES_ACTIVE;
+
+const SPRING_CLOUD_CONFIG_URI = env.SPRING_CLOUD_CONFIG_URI || defaults.SPRING_CLOUD_CONFIG_URI;
+
 const config = {
   APP_PORT,
   APP_SEC_PORT,
   APP_IP,
   LOG_LEVEL,
   NUM_OF_WORKERS,
+  SPRING_PROFILES_ACTIVE,
+  SPRING_CLOUD_CONFIG_URI,
   datacore: {
     AUTHORIZATION: env.AUTHORIZATION,
     URI: env.DATACORE_URI,
@@ -44,6 +52,8 @@ const config = {
       app:        packaJ.name,
       hostName:   env.EUREKA_APP_HOSTNAME,
       ipAddr:     env.EUREKA_APP_IP_ADDR,
+      port:       APP_PORT,
+      securePort: APP_SEC_PORT,
       vipAddress: env.EUREKA_VIP_ADDRESS,
     },
     host: env.EUREKA_HOST,
