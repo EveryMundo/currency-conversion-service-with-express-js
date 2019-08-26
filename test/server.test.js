@@ -154,9 +154,9 @@ describe('server.js', () => {
       box.stub(sf, 'setProcessEvents').callsFake(setProcessEvents);
       box.stub(sf, 'stopWorker').callsFake(stopWorker);
       box.stub(ss, 'setupSwagger').callsFake(setupSwagger);
-      box.stub(expressSingleton, 'express').value({
-        use: () => {},
-      });
+      // box.stub(expressSingleton, 'express').value({
+      //   use: () => {},
+      // });
     });
 
     it('should call all the features functions in order', async () => {

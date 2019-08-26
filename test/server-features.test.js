@@ -28,7 +28,7 @@ describe('server-features.js', () => {
     box.stub(process, 'on').callsFake((msg, cb) => cb({}));
     express = {
       server: {address:() => ({port: 1000})},
-      listen: (arg1, arg2, cb) => {
+      listen: (arg1, cb) => {
         cb();
         return {
           on: () => {},
@@ -70,7 +70,7 @@ describe('server-features.js', () => {
         const { listen } = cleanrequire('../server-features');
         express = {
           server: {address:() => ({port: 1000})},
-          listen: (arg1, arg2, cb) => {
+          listen: (arg1, cb) => {
             cb();
             return {
               on: () => {},
@@ -91,7 +91,7 @@ describe('server-features.js', () => {
         const { listen } = cleanrequire('../server-features');
         express = {
           server: {address:() => ({port: 1000})},
-          listen: (arg1, arg2, cb) => {
+          listen: (arg1, cb) => {
             cb();
             return {
               on: () => {},
