@@ -8,7 +8,6 @@ const logr                    = require('em-logr').create({ name: 'WORKER'});
 const { run }                 = require('@everymundo/runner');
 const { setupSwagger }        = require('./lib/setup-swagger');
 const { loadConfig }          = require('./lib/spring');
-const { getCheckJwtMiddleware, respondWithUnauthorizedError }  = require('./lib/auth0');
 const { registerRoutes }      = require('./routes/index');
 
 const { listen, stopWorker, setProcessEvents } = require('./server-features');
@@ -20,17 +19,16 @@ const { listen, stopWorker, setProcessEvents } = require('./server-features');
  */
 const expressMiddleware = (express) => {
   express.use(bodyparser.json({limit: '250mb'}));
-  express.use(bodyparser.urlencoded());
   express.use(helmet());
-  express.use(getCheckJwtMiddleware());
-  express.use(respondWithUnauthorizedError);
 
   return express;
 };
 
 const dealWithErrors = (express, error) => {
-  logr.error(error);
-  stopWorker();
+  if (error) {
+    logr.error(error);
+    stopWorker();
+  }
 
   return express;
 };
@@ -62,17 +60,18 @@ const init = () => {
     //     150000
     //   );
     // })
-    .then(() => loadServer)
-    .then(() => enforceGarbageCollection())
+    .then(loadServer)
+    .then(enforceGarbageCollection)
     .catch(dealWithErrors(express));
 };
 
 
-const enforceGarbageCollection = () => {
+const enforceGarbageCollection = (express) => {
   setInterval(() => {
     logr.info('Garbage collecting');
     global.gc();
   }, 1800000);
+  return express;
 };
 
 module.exports = {

@@ -4,4 +4,6 @@ spring:
       enabled: true
       endpoint: 'http://localhost:54321'
       name: application-name-service-v1
-      profiles: 'local-dev,local'
+      profiles: aws
+auth0:
+  audience: 'https://openair-dev.airtrfx.com/application-name-service-v1'

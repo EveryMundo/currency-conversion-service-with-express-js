@@ -6,11 +6,10 @@ const logr     = require('em-logr').create({ name: 'WORKER'});
 const listen = express => new Promise((resolve, reject) => {
   try {
     logr.debug(`listening to http://0.0.0.0:${config.APP_PORT}`);
-    express.listen(config.APP_PORT, config.APP_IP, (err) => {
+    express.listen(config.APP_PORT, (err) => {
       logr.debug('listening to ', config.APP_PORT);
 
       if (err) {
-        console.log(err);
         logr.error(err);
         return reject(err);
       }
