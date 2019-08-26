@@ -1,7 +1,7 @@
 {
-  "name": "airfare-cadmus-service-v1",
+  "name": "application-name-service-v1",
   "profiles": [
-    "aws,aws-dev,aws-dev-virginia"
+    "aws"
   ],
   "label": null,
   "version": "5ce85c167e38d159f9ba691cc340c02b3bd26a72",
@@ -16,7 +16,6 @@
     {
       "name": "https://github.com/Bodaclick/openair-shared-aws/aws-dev-virginia/application.yml",
       "source": {
-        "eureka.client.service-url.default": "http://172.17.0.1:8080/eureka/v2/"
       }
     },
     {
@@ -32,6 +31,7 @@
         "eureka.client.register-with-eureka": true,
         "eureka.client.fetch-registry": true,
         "eureka.client.preferSameZone": true,
+        "eureka.client.service-url": { "defaultZone" : "http://localhost:8080/eureka/v2/" },
         "eureka.instance.prefer-ip-address": true
       }
     }
