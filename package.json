@@ -69,7 +69,7 @@
     "express": "^4.17.1",
     "express-json-validator-middleware": "^1.2.3",
     "express-jsonschema": "^1.1.6",
-    "express-jwt": "^5.3.1",
+    "express-jwt": "^6.0.0",
     "express-jwt-authz": "^1.0.0",
     "ghooks": "^2.0.4",
     "helmet": "^3.20.0",
