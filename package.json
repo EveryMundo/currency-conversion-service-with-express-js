@@ -51,7 +51,7 @@
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.14.3",
-    "mocha": "^5.2.0",
+    "mocha": "^10.2.0",
     "sinon": "^5.0.10"
   },
   "dependencies": {
